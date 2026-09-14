@@ -3,7 +3,7 @@ WORKDIR /app
 COPY .mvn ./.mvn
 COPY mvnw pom.xml ./
 COPY src ./src
-RUN chmod +x mvnw && ./mvnw clean package -Dmaven.test.skip=true
+RUN chmod +x mvnw && ./mvnw clean package
 
 FROM eclipse-temurin:26-jre-alpine
 WORKDIR /app
