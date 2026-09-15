@@ -14,17 +14,17 @@
 
 ---
 
-## Фаза 2: Модель данных и Core API (Backend Foundation)
+## ✅ Фаза 2: Модель данных и Core API (Backend Foundation)
 
 | ID | Задача | Dependencies | Acceptance Criteria |
 |----|--------|--------------|---------------------|
-| BE-004-DTO | Создание DTO-классов | INFRA-003 | `PersonRequest` (для создания/редактирования), `PersonResponse` (для отображения), `TreeResponse` (граф семьи). Поля дублируют Person, но без `@ManyToOne` связей. DTO отделены от Entity. |
-| BE-004-HIERARCHY | Создание JPA Entity Person со связями | BE-004-DTO, INFRA-003 | Поля: id, firstName, lastName, bio, photoUrl, birthDate (LocalDate), deathDate (LocalDate, nullable=true), ownerUsername, isClaimed. Добавлены связи: `@ManyToOne private Person father;`, `@ManyToOne private Person mother;`. Lombok применен. |
-| BE-005 | Реализовать PersonRepository | BE-004-HIERARCHY | Интерфейс наследуется от JpaRepository. Методы: `findByOwnerUsername()`, `findById()`, `findAll()`. |
-| BE-006-TREE | Создать слой сервисов (Tree Logic) | BE-005 | Методы CRUD реализованы. Добавлен метод `getFamilyTree()`, возвращающий корень (мужа) с заполненными связями wife и children. В заглушках значение deathDate равно null. Написаны unit-тесты через Mockito. Выделен бин `PermissionService` (`isOwner`). |
-| BE-008-STUB | Загрузка фото (Stub) | BE-006-TREE | Контроллер `POST /api/persons/{id}/photo` принимает строку-ссылку. URL сохраняется в `photoUrl`. |
-| BE-008-UPLOAD | Загрузка фото в локальное хранилище | BE-008-STUB | Сервис-метод загрузки файла на диск (папка `./uploads/`). Генерирует UUID-имя, сохраняет URL в `photoUrl`. Валидация: размер ≤ 5MB, MIME-тип image/jpeg/png. |
-| CLAIM-017 | Закладка фундамента MVP-2.0 | BE-006-TREE | Эндпоинт `PATCH /api/persons/{id}/claim` устанавливает владельца профиля. |
+| ✅ BE-004-DTO | Создание DTO-классов | INFRA-003 | `PersonRequest` (для создания/редактирования), `PersonResponse` (для отображения), `TreeResponse` (граф семьи). Поля дублируют Person, но без `@ManyToOne` связей. DTO отделены от Entity. |
+| ✅ BE-004-HIERARCHY | Создание JPA Entity Person со связями | BE-004-DTO, INFRA-003 | Поля: id, firstName, lastName, bio, photoUrl, birthDate (LocalDate), deathDate (LocalDate, nullable=true), ownerUsername, isClaimed. Добавлены связи: `@ManyToOne private Person father;`, `@ManyToOne private Person mother;`. Lombok применен. |
+| ✅ BE-005 | Реализовать PersonRepository | BE-004-HIERARCHY | Интерфейс наследуется от JpaRepository. Методы: `findByOwnerUsername()`, `findById()`, `findAll()`. |
+| ✅ BE-006-TREE | Создать слой сервисов (Tree Logic) | BE-005 | Методы CRUD реализованы. Добавлен метод `getFamilyTree()`, возвращающий корень (мужа) с заполненными связями wife и children. В заглушках значение deathDate равно null. Написаны unit-тесты через Mockito. Выделен бин `PermissionService` (`isOwner`). |
+| ✅ BE-008-STUB | Загрузка фото (Stub) | BE-006-TREE | Контроллер `POST /api/persons/{id}/photo` принимает строку-ссылку. URL сохраняется в `photoUrl`. |
+| ✅ BE-008-UPLOAD | Загрузка фото в локальное хранилище | BE-008-STUB | Сервис-метод загрузки файла на диск (папка `./uploads/`). Генерирует UUID-имя, сохраняет URL в `photoUrl`. Валидация: размер ≤ 5MB, MIME-тип image/jpeg/png. |
+| ✅ CLAIM-017 | Закладка фундамента MVP-2.0 | BE-006-TREE | Эндпоинт `PATCH /api/persons/{id}/claim` устанавливает владельца профиля. |
 
 ---
 
