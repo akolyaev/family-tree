@@ -104,7 +104,8 @@ class PersonControllerValidationTest {
                         .content(objectMapper.writeValueAsString(request)))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.firstName").value("Ivan"))
-                .andExpect(jsonPath("$.lastName").value("Ivanov"));
+                .andExpect(jsonPath("$.lastName").value("I*****"))
+                .andExpect(jsonPath("$.birthDate").value("1990"));
     }
 
     @Test

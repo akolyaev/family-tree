@@ -11,7 +11,7 @@ import java.util.List;
 @Builder
 public class TreeResponse {
 
-    private PersonResponse root;
-    private PersonResponse wife;
-    private List<PersonResponse> children;
+    private PersonPublicResponse root;
+    private PersonPublicResponse wife;
+    private List<PersonPublicResponse> children;
 }

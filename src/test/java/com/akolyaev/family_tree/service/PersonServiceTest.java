@@ -1,6 +1,7 @@
 package com.akolyaev.family_tree.service;
 
 import com.akolyaev.family_tree.domain.Person;
+import com.akolyaev.family_tree.dto.PersonPublicResponse;
 import com.akolyaev.family_tree.dto.PersonRequest;
 import com.akolyaev.family_tree.dto.PersonResponse;
 import com.akolyaev.family_tree.dto.TreeResponse;
@@ -20,7 +21,6 @@ import com.akolyaev.family_tree.exception.EntityNotFoundException;
 
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.ArgumentMatchers.anyLong;
 import static org.mockito.Mockito.*;
 
 @ExtendWith(MockitoExtension.class)
@@ -142,6 +142,8 @@ class PersonServiceTest {
         assertNotNull(tree);
         assertNotNull(tree.getRoot());
         assertEquals("Ivan", tree.getRoot().getFirstName());
+        assertEquals("I*****", tree.getRoot().getLastName());
+        assertEquals("1990", tree.getRoot().getBirthDate());
         assertNull(tree.getWife());
         assertNotNull(tree.getChildren());
     }
@@ -167,6 +169,36 @@ class PersonServiceTest {
 
         assertEquals("http://new-photo.jpg", result.getPhotoUrl());
         verify(personRepository).save(testPerson);
+    }
+
+    // ---- getByIdPublic ----
+
+    @Test
+    void getByIdPublic_returnsMaskedPerson() {
+        when(personRepository.findById(1L)).thenReturn(Optional.of(testPerson));
+
+        PersonPublicResponse response = personService.getByIdPublic(1L);
+
+        assertNotNull(response);
+        assertEquals(1L, response.getId());
+        assertEquals("Ivan", response.getFirstName());
+        assertEquals("I*****", response.getLastName());
+        assertEquals("1990", response.getBirthDate());
+        assertNull(response.getDeathDate());
+    }
+
+    // ---- findAllPublic ----
+
+    @Test
+    void findAllPublic_returnsMaskedPersons() {
+        when(personRepository.findAll()).thenReturn(List.of(testPerson));
+
+        List<PersonPublicResponse> responses = personService.findAllPublic();
+
+        assertEquals(1, responses.size());
+        assertEquals("Ivan", responses.get(0).getFirstName());
+        assertEquals("I*****", responses.get(0).getLastName());
+        assertEquals("1990", responses.get(0).getBirthDate());
     }
 
     // ---- claimPerson ----

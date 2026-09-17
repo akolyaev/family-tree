@@ -1,8 +1,8 @@
 package com.akolyaev.family_tree.controller;
 
 import com.akolyaev.family_tree.domain.Person;
+import com.akolyaev.family_tree.dto.PersonPublicResponse;
 import com.akolyaev.family_tree.dto.PersonRequest;
-import com.akolyaev.family_tree.dto.PersonResponse;
 import com.akolyaev.family_tree.dto.TreeResponse;
 import com.akolyaev.family_tree.service.PersonService;
 import org.springframework.http.ResponseEntity;
@@ -24,25 +24,25 @@ public class PersonController {
     // ---- CRUD ----
 
     @PostMapping
-    public ResponseEntity<PersonResponse> create(@Valid @RequestBody PersonRequest request) {
+    public ResponseEntity<PersonPublicResponse> create(@Valid @RequestBody PersonRequest request) {
         Person person = personService.create(request);
-        return ResponseEntity.ok(toResponse(person));
+        return ResponseEntity.ok(personService.toPublicResponse(person));
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<PersonResponse> getById(@PathVariable Long id) {
-        return ResponseEntity.ok(personService.getById(id));
+    public ResponseEntity<PersonPublicResponse> getById(@PathVariable Long id) {
+        return ResponseEntity.ok(personService.getByIdPublic(id));
     }
 
     @GetMapping
-    public ResponseEntity<List<PersonResponse>> findAll() {
-        return ResponseEntity.ok(personService.findAll());
+    public ResponseEntity<List<PersonPublicResponse>> findAll() {
+        return ResponseEntity.ok(personService.findAllPublic());
     }
 
     @PutMapping("/{id}")
-    public ResponseEntity<PersonResponse> update(@PathVariable Long id, @Valid @RequestBody PersonRequest request) {
+    public ResponseEntity<PersonPublicResponse> update(@PathVariable Long id, @Valid @RequestBody PersonRequest request) {
         Person person = personService.update(id, request);
-        return ResponseEntity.ok(toResponse(person));
+        return ResponseEntity.ok(personService.toPublicResponse(person));
     }
 
     @DeleteMapping("/{id}")
@@ -61,39 +61,20 @@ public class PersonController {
     // ---- Photo Upload Stub ----
 
     @PostMapping("/{id}/photo")
-    public ResponseEntity<PersonResponse> uploadPhoto(
+    public ResponseEntity<PersonPublicResponse> uploadPhoto(
             @PathVariable Long id,
             @RequestBody String photoUrl) {
         Person person = personService.updatePhotoUrl(id, photoUrl);
-        return ResponseEntity.ok(toResponse(person));
+        return ResponseEntity.ok(personService.toPublicResponse(person));
     }
 
     // ---- Claim Endpoint ----
 
     @PatchMapping("/{id}/claim")
-    public ResponseEntity<PersonResponse> claimPerson(
+    public ResponseEntity<PersonPublicResponse> claimPerson(
             @PathVariable Long id,
             @RequestBody String username) {
         Person person = personService.claimPerson(id, username);
-        return ResponseEntity.ok(toResponse(person));
-    }
-
-    // ---- Helper ----
-
-    private PersonResponse toResponse(Person person) {
-        return PersonResponse.builder()
-                .id(person.getId())
-                .firstName(person.getFirstName())
-                .lastName(person.getLastName())
-                .bio(person.getBio())
-                .photoUrl(person.getPhotoUrl())
-                .birthDate(person.getBirthDate())
-                .deathDate(person.getDeathDate())
-                .ownerUsername(person.getOwnerUsername())
-                .isClaimed(person.getIsClaimed())
-                .fatherId(person.getFather() != null ? person.getFather().getId().toString() : null)
-                .motherId(person.getMother() != null ? person.getMother().getId().toString() : null)
-                .spouseId(person.getSpouse() != null ? person.getSpouse().getId().toString() : null)
-                .build();
+        return ResponseEntity.ok(personService.toPublicResponse(person));
     }
 }

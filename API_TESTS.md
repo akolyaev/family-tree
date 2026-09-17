@@ -26,21 +26,35 @@ Invoke-RestMethod -Uri "http://localhost:8080/api/persons" -Method Post -Body $b
 ```
 
 ## 4. Получить person по ID
+> **Важно:** Фамилия и даты возвращаются в маскированном виде (PII masking).
 ```powershell
 Invoke-RestMethod "http://localhost:8080/api/persons/1"
 ```
+**Пример ответа:**
+```json
+{
+  "id": 1,
+  "firstName": "Иван",
+  "lastName": "И*****",
+  "birthDate": "1990",
+  "deathDate": null
+}
+```
 
 ## 5. Список всех persons
+> Все фамилии и даты — в маскированном виде.
 ```powershell
 Invoke-RestMethod "http://localhost:8080/api/persons"
 ```
 
 ## 6. Семейное дерево
+> Tree Response тоже с маскировкой.
 ```powershell
 Invoke-RestMethod "http://localhost:8080/api/persons/tree?username=admin"
 ```
 
 ## 7. Обновить person
+> Ответ также содержит маскированные поля.
 ```powershell
 $body = '{"firstName":"Иван","lastName":"Иванов","bio":"Любит рыбалку","birthDate":"1990-01-01"}'
 Invoke-RestMethod -Uri "http://localhost:8080/api/persons/1" -Method Put -Body $body -ContentType "application/json"
@@ -131,9 +145,27 @@ try {
 
 ---
 
-## Формат JSON-ответов при ошибках
+## Формат JSON-ответов
 
-**Validation error (HTTP 400):**
+### Успешный ответ (с маскировкой PII)
+```json
+{
+  "id": 1,
+  "firstName": "Иван",
+  "lastName": "И*****",
+  "birthDate": "1990",
+  "deathDate": null,
+  "bio": "Любит рыбалку",
+  "photoUrl": null,
+  "ownerUsername": "admin",
+  "isClaimed": true,
+  "fatherId": null,
+  "motherId": null,
+  "spouseId": null
+}
+```
+
+### Validation error (HTTP 400):
 ```json
 {
   "status": 400,

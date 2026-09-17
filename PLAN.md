@@ -37,6 +37,19 @@
 
 ---
 
+## ✅ Фаза 2.6: Защита персональных данных (PII Masking)
+
+| ID | Задача | Dependencies | Acceptance Criteria |
+|----|--------|--------------|---------------------|
+| ✅ PII-001 | Создать `MaskingUtil` утилитный класс | None | `maskLastName("Иванов")` → `"И*****"`, `maskDate(LocalDate)` → `"1990"` |
+| ✅ PII-002 | Создать `PersonPublicResponse` DTO | PII-001 | `birthDate`/`deathDate` → String (год), `lastName` → маскированное |
+| ✅ PII-003 | Обновить `TreeResponse` | PII-002 | Использует `PersonPublicResponse` вместо `PersonResponse` |
+| ✅ PII-004 | Добавить публичные методы в `PersonService` | PII-003 | `getByIdPublic()`, `findAllPublic()`, `toPublicResponse()` |
+| ✅ PII-005 | Обновить `PersonController` | PII-004 | Все эндпоинты возвращают `PersonPublicResponse`, удалён дублирующий `toResponse()` |
+| ✅ PII-006 | Добавить тесты на маскировку | PII-005 | `MaskingUtilTest`, `PersonControllerMaskingTest`, обновлён `PersonServiceTest` |
+
+---
+
 ## Фаза 3: Frontend Views (Thymeleaf)
 
 | ID | Задача | Dependencies | Acceptance Criteria |
@@ -55,6 +68,7 @@
 | SEC-011 | In-Memory Authentication (Минимум) | BE-006-TREE | Задано два пользователя: `admin` (roles USER, MASTER), `user` (role USER). Форма входа появляется при обращении к защищенным ресурсам. Logout работает. Пользователи вынесены в `application.properties`. |
 | SEC-012 | Ограничение прав (Владение) | SEC-011 | Правило вынесено в `PermissionService.canEdit(id)`: `return person.getOwnerUsername() != null && person.getOwnerUsername().equals(currentUsername);`. Кнопка обернута в `<div sec:authorize="@permissionService.canEdit(${person.id})">`. |
 | SEC-013 | Проверка Мастер-прав (Подготовка) | SEC-012 | Логика метода `canEdit()` обновляется: `(является владельцем) OR (имеет роль ROLE_MASTER)`. |
+| SEC-014 | Dual-response: авторизованные видят полные данные | SEC-013 | `PersonController` проверяет `Authentication`. Авторизованный пользователь получает `PersonResponse` (полные данные), неавторизованный — `PersonPublicResponse` (маскированные). |
 
 ---
 
@@ -82,8 +96,8 @@
 Пользователь открывает деплоймент на Render:
 
 1. Видит главную страницу с визуализацией древа (блоки Муж+Жена связаны с Сыном и Дочерью).
-2. Кликает по любому элементу (например, «Сын»). Открывается карточка с ФИО, датой рождения, фото и пустым полем «Био».
-3. Кликает «Войти» в хедере, вводит логин/пароль мужа (`admin` / `password`).
+2. Кликает по любому элементу (например, «Сын»). Открывается карточка с ФИО (фамилия маскирована: «И*****»), датой рождения (только год: «1990»), фото и пустым полем «Био».
+3. Кликает «Войти» в хедере, вводит логин/пароль мужа (`admin` / `password`). После авторизации становятся видны полные данные (фамилия, полные даты рождения и смерти) всех членов семьи.
 4. Возвращается в карточку мужа, нажимает «Редактировать».
 5. Меняет биографию или дату рождения (поля «Фото» в форме нет).
 6. Сохраняет — страница перезагружается, новый текст виден на живом сайте.

@@ -1,11 +1,13 @@
 package com.akolyaev.family_tree.service;
 
 import com.akolyaev.family_tree.domain.Person;
+import com.akolyaev.family_tree.dto.PersonPublicResponse;
 import com.akolyaev.family_tree.dto.PersonRequest;
 import com.akolyaev.family_tree.dto.PersonResponse;
 import com.akolyaev.family_tree.dto.TreeResponse;
 import com.akolyaev.family_tree.exception.EntityNotFoundException;
 import com.akolyaev.family_tree.repository.PersonRepository;
+import com.akolyaev.family_tree.util.MaskingUtil;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -103,14 +105,14 @@ public class PersonService {
         }
 
         Person root = rootPersons.get(0);
-        PersonResponse rootResponse = toResponse(root);
+        PersonPublicResponse rootResponse = toPublicResponse(root);
 
-        PersonResponse wifeResponse = null;
+        PersonPublicResponse wifeResponse = null;
         if (root.getSpouse() != null) {
-            wifeResponse = toResponse(root.getSpouse());
+            wifeResponse = toPublicResponse(root.getSpouse());
         }
 
-        List<PersonResponse> children = findChildren(root);
+        List<PersonPublicResponse> children = findChildrenPublic(root);
 
         return TreeResponse.builder()
                 .root(rootResponse)
@@ -136,6 +138,48 @@ public class PersonService {
         person.setOwnerUsername(username);
         person.setIsClaimed(true);
         return personRepository.save(person);
+    }
+
+    // ---- Public (masked) helpers ----
+
+    public PersonPublicResponse toPublicResponse(Person person) {
+        return PersonPublicResponse.builder()
+                .id(person.getId())
+                .firstName(person.getFirstName())
+                .lastName(MaskingUtil.maskLastName(person.getLastName()))
+                .bio(person.getBio())
+                .photoUrl(person.getPhotoUrl())
+                .birthDate(MaskingUtil.maskDate(person.getBirthDate()))
+                .deathDate(MaskingUtil.maskDate(person.getDeathDate()))
+                .ownerUsername(person.getOwnerUsername())
+                .isClaimed(person.getIsClaimed())
+                .fatherId(person.getFather() != null ? person.getFather().getId().toString() : null)
+                .motherId(person.getMother() != null ? person.getMother().getId().toString() : null)
+                .spouseId(person.getSpouse() != null ? person.getSpouse().getId().toString() : null)
+                .build();
+    }
+
+    @Transactional(readOnly = true)
+    public PersonPublicResponse getByIdPublic(Long id) {
+        Person person = personRepository.findById(id)
+                .orElseThrow(() -> new EntityNotFoundException("Person not found with id: " + id));
+        return toPublicResponse(person);
+    }
+
+    @Transactional(readOnly = true)
+    public List<PersonPublicResponse> findAllPublic() {
+        return personRepository.findAll().stream()
+                .map(this::toPublicResponse)
+                .collect(Collectors.toList());
+    }
+
+    private List<PersonPublicResponse> findChildrenPublic(Person root) {
+        List<Person> allPersons = personRepository.findAll();
+        return allPersons.stream()
+                .filter(p -> (p.getFather() != null && p.getFather().getId().equals(root.getId()))
+                        || (p.getMother() != null && p.getMother().getId().equals(root.getId())))
+                .map(this::toPublicResponse)
+                .collect(Collectors.toList());
     }
 
     // ---- Helpers ----
