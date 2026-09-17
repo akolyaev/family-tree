@@ -4,6 +4,7 @@ import com.akolyaev.family_tree.domain.Person;
 import com.akolyaev.family_tree.dto.PersonRequest;
 import com.akolyaev.family_tree.dto.PersonResponse;
 import com.akolyaev.family_tree.dto.TreeResponse;
+import com.akolyaev.family_tree.exception.EntityNotFoundException;
 import com.akolyaev.family_tree.repository.PersonRepository;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -51,7 +52,7 @@ public class PersonService {
     @Transactional(readOnly = true)
     public PersonResponse getById(Long id) {
         Person person = personRepository.findById(id)
-                .orElseThrow(() -> new IllegalArgumentException("Person not found with id: " + id));
+                .orElseThrow(() -> new EntityNotFoundException("Person not found with id: " + id));
         return toResponse(person);
     }
 
@@ -65,7 +66,7 @@ public class PersonService {
     @Transactional
     public Person update(Long id, PersonRequest request) {
         Person person = personRepository.findById(id)
-                .orElseThrow(() -> new IllegalArgumentException("Person not found with id: " + id));
+                .orElseThrow(() -> new EntityNotFoundException("Person not found with id: " + id));
 
         person.setFirstName(request.getFirstName());
         person.setLastName(request.getLastName());
@@ -123,7 +124,7 @@ public class PersonService {
     @Transactional
     public Person updatePhotoUrl(Long id, String photoUrl) {
         Person person = personRepository.findById(id)
-                .orElseThrow(() -> new IllegalArgumentException("Person not found with id: " + id));
+                .orElseThrow(() -> new EntityNotFoundException("Person not found with id: " + id));
         person.setPhotoUrl(photoUrl);
         return personRepository.save(person);
     }
@@ -131,7 +132,7 @@ public class PersonService {
     @Transactional
     public Person claimPerson(Long id, String username) {
         Person person = personRepository.findById(id)
-                .orElseThrow(() -> new IllegalArgumentException("Person not found with id: " + id));
+                .orElseThrow(() -> new EntityNotFoundException("Person not found with id: " + id));
         person.setOwnerUsername(username);
         person.setIsClaimed(true);
         return personRepository.save(person);

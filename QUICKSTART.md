@@ -17,7 +17,7 @@ java -version  # проверить: 17.0.x
 
 ## 3. Запуск через Docker (рекомендуется)
 ```powershell
-docker-compose up -d
+docker-compose up -d --build
 ```
 Приложение доступно на `http://localhost:8080`
 

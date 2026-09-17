@@ -7,6 +7,7 @@ import com.akolyaev.family_tree.dto.TreeResponse;
 import com.akolyaev.family_tree.service.PersonService;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import jakarta.validation.Valid;
 
 import java.util.List;
 
@@ -23,7 +24,7 @@ public class PersonController {
     // ---- CRUD ----
 
     @PostMapping
-    public ResponseEntity<PersonResponse> create(@RequestBody PersonRequest request) {
+    public ResponseEntity<PersonResponse> create(@Valid @RequestBody PersonRequest request) {
         Person person = personService.create(request);
         return ResponseEntity.ok(toResponse(person));
     }
@@ -39,7 +40,7 @@ public class PersonController {
     }
 
     @PutMapping("/{id}")
-    public ResponseEntity<PersonResponse> update(@PathVariable Long id, @RequestBody PersonRequest request) {
+    public ResponseEntity<PersonResponse> update(@PathVariable Long id, @Valid @RequestBody PersonRequest request) {
         Person person = personService.update(id, request);
         return ResponseEntity.ok(toResponse(person));
     }

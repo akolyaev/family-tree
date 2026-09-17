@@ -16,6 +16,8 @@ import java.time.LocalDate;
 import java.util.List;
 import java.util.Optional;
 
+import com.akolyaev.family_tree.exception.EntityNotFoundException;
+
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyLong;
@@ -87,7 +89,7 @@ class PersonServiceTest {
     void getById_throwsWhenNotFound() {
         when(personRepository.findById(99L)).thenReturn(Optional.empty());
 
-        assertThrows(IllegalArgumentException.class, () -> personService.getById(99L));
+        assertThrows(EntityNotFoundException.class, () -> personService.getById(99L));
     }
 
     // ---- findAll ----
