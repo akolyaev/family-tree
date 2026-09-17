@@ -14,6 +14,7 @@ import org.springframework.test.web.servlet.MockMvc;
 
 import java.time.LocalDate;
 
+import org.springframework.security.test.context.support.WithMockUser;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
@@ -82,6 +83,7 @@ class PersonControllerMaskingTest {
     }
 
     @Test
+    @WithMockUser(username = "admin")
     void update_returnsMaskedFields() throws Exception {
         Person saved = personRepository.save(Person.builder()
                 .firstName("Test")

@@ -3,7 +3,6 @@ package com.akolyaev.family_tree.service;
 import com.akolyaev.family_tree.domain.Person;
 import com.akolyaev.family_tree.dto.PersonPublicResponse;
 import com.akolyaev.family_tree.dto.PersonRequest;
-import com.akolyaev.family_tree.dto.PersonResponse;
 import com.akolyaev.family_tree.dto.TreeResponse;
 import com.akolyaev.family_tree.exception.EntityNotFoundException;
 import com.akolyaev.family_tree.repository.PersonRepository;
@@ -52,16 +51,16 @@ public class PersonService {
     }
 
     @Transactional(readOnly = true)
-    public PersonResponse getById(Long id) {
+    public PersonPublicResponse getByIdPublic(Long id) {
         Person person = personRepository.findById(id)
                 .orElseThrow(() -> new EntityNotFoundException("Person not found with id: " + id));
-        return toResponse(person);
+        return toPublicResponse(person);
     }
 
     @Transactional(readOnly = true)
-    public List<PersonResponse> findAll() {
+    public List<PersonPublicResponse> findAllPublic() {
         return personRepository.findAll().stream()
-                .map(this::toResponse)
+                .map(this::toPublicResponse)
                 .collect(Collectors.toList());
     }
 
@@ -159,20 +158,6 @@ public class PersonService {
                 .build();
     }
 
-    @Transactional(readOnly = true)
-    public PersonPublicResponse getByIdPublic(Long id) {
-        Person person = personRepository.findById(id)
-                .orElseThrow(() -> new EntityNotFoundException("Person not found with id: " + id));
-        return toPublicResponse(person);
-    }
-
-    @Transactional(readOnly = true)
-    public List<PersonPublicResponse> findAllPublic() {
-        return personRepository.findAll().stream()
-                .map(this::toPublicResponse)
-                .collect(Collectors.toList());
-    }
-
     private List<PersonPublicResponse> findChildrenPublic(Person root) {
         List<Person> allPersons = personRepository.findAll();
         return allPersons.stream()
@@ -182,31 +167,9 @@ public class PersonService {
                 .collect(Collectors.toList());
     }
 
-    // ---- Helpers ----
+    // ---- Accessor for PermissionService ----
 
-    private PersonResponse toResponse(Person person) {
-        return PersonResponse.builder()
-                .id(person.getId())
-                .firstName(person.getFirstName())
-                .lastName(person.getLastName())
-                .bio(person.getBio())
-                .photoUrl(person.getPhotoUrl())
-                .birthDate(person.getBirthDate())
-                .deathDate(person.getDeathDate())
-                .ownerUsername(person.getOwnerUsername())
-                .isClaimed(person.getIsClaimed())
-                .fatherId(person.getFather() != null ? person.getFather().getId().toString() : null)
-                .motherId(person.getMother() != null ? person.getMother().getId().toString() : null)
-                .spouseId(person.getSpouse() != null ? person.getSpouse().getId().toString() : null)
-                .build();
-    }
-
-    private List<PersonResponse> findChildren(Person root) {
-        List<Person> allPersons = personRepository.findAll();
-        return allPersons.stream()
-                .filter(p -> (p.getFather() != null && p.getFather().getId().equals(root.getId()))
-                        || (p.getMother() != null && p.getMother().getId().equals(root.getId())))
-                .map(this::toResponse)
-                .collect(Collectors.toList());
+    public PersonRepository getRepository() {
+        return personRepository;
     }
 }

@@ -3,7 +3,6 @@ package com.akolyaev.family_tree.service;
 import com.akolyaev.family_tree.domain.Person;
 import com.akolyaev.family_tree.dto.PersonPublicResponse;
 import com.akolyaev.family_tree.dto.PersonRequest;
-import com.akolyaev.family_tree.dto.PersonResponse;
 import com.akolyaev.family_tree.dto.TreeResponse;
 import com.akolyaev.family_tree.repository.PersonRepository;
 import org.junit.jupiter.api.BeforeEach;
@@ -71,37 +70,40 @@ class PersonServiceTest {
         verify(personRepository).save(any(Person.class));
     }
 
-    // ---- getById ----
+    // ---- getByIdPublic ----
 
     @Test
-    void getById_returnsPersonResponse() {
+    void getByIdPublic_returnsMaskedPerson() {
         when(personRepository.findById(1L)).thenReturn(Optional.of(testPerson));
 
-        PersonResponse response = personService.getById(1L);
+        PersonPublicResponse response = personService.getByIdPublic(1L);
 
         assertNotNull(response);
-        assertEquals(1L, response.getId());
+        assertEquals(Long.valueOf(1L), response.getId());
         assertEquals("Ivan", response.getFirstName());
+        assertEquals("I*****", response.getLastName());
+        assertEquals("1990", response.getBirthDate());
         assertNull(response.getDeathDate());
     }
 
     @Test
-    void getById_throwsWhenNotFound() {
+    void getByIdPublic_throwsWhenNotFound() {
         when(personRepository.findById(99L)).thenReturn(Optional.empty());
 
-        assertThrows(EntityNotFoundException.class, () -> personService.getById(99L));
+        assertThrows(EntityNotFoundException.class, () -> personService.getByIdPublic(99L));
     }
 
-    // ---- findAll ----
+    // ---- findAllPublic ----
 
     @Test
-    void findAll_returnsAllPersons() {
+    void findAllPublic_returnsAllPersons() {
         when(personRepository.findAll()).thenReturn(List.of(testPerson));
 
-        List<PersonResponse> responses = personService.findAll();
+        List<PersonPublicResponse> responses = personService.findAllPublic();
 
         assertEquals(1, responses.size());
         assertEquals("Ivan", responses.get(0).getFirstName());
+        assertEquals("I*****", responses.get(0).getLastName());
     }
 
     // ---- update ----
@@ -169,36 +171,6 @@ class PersonServiceTest {
 
         assertEquals("http://new-photo.jpg", result.getPhotoUrl());
         verify(personRepository).save(testPerson);
-    }
-
-    // ---- getByIdPublic ----
-
-    @Test
-    void getByIdPublic_returnsMaskedPerson() {
-        when(personRepository.findById(1L)).thenReturn(Optional.of(testPerson));
-
-        PersonPublicResponse response = personService.getByIdPublic(1L);
-
-        assertNotNull(response);
-        assertEquals(1L, response.getId());
-        assertEquals("Ivan", response.getFirstName());
-        assertEquals("I*****", response.getLastName());
-        assertEquals("1990", response.getBirthDate());
-        assertNull(response.getDeathDate());
-    }
-
-    // ---- findAllPublic ----
-
-    @Test
-    void findAllPublic_returnsMaskedPersons() {
-        when(personRepository.findAll()).thenReturn(List.of(testPerson));
-
-        List<PersonPublicResponse> responses = personService.findAllPublic();
-
-        assertEquals(1, responses.size());
-        assertEquals("Ivan", responses.get(0).getFirstName());
-        assertEquals("I*****", responses.get(0).getLastName());
-        assertEquals("1990", responses.get(0).getBirthDate());
     }
 
     // ---- claimPerson ----

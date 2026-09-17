@@ -70,7 +70,7 @@ class PersonControllerValidationTest {
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(request)))
                 .andExpect(status().isBadRequest())
-                .andExpect(jsonPath("$.fieldErrors.birthDate").value("Birth date must be in the past"));
+                .andExpect(jsonPath("$.fieldErrors.birthDate").value("Birth date must not be in the future"));
     }
 
     @Test

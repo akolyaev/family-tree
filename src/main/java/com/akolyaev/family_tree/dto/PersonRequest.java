@@ -3,7 +3,7 @@ package com.akolyaev.family_tree.dto;
 import lombok.*;
 
 import jakarta.validation.constraints.NotBlank;
-import jakarta.validation.constraints.Past;
+import jakarta.validation.constraints.PastOrPresent;
 import jakarta.validation.constraints.Size;
 import java.time.LocalDate;
 
@@ -25,7 +25,7 @@ public class PersonRequest {
 
     private String photoUrl;
 
-    @Past(message = "Birth date must be in the past")
+    @PastOrPresent(message = "Birth date must not be in the future")
     private LocalDate birthDate;
     private LocalDate deathDate;
     private String ownerUsername;
