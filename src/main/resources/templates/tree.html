@@ -27,28 +27,38 @@
             display: flex;
             gap: 2rem;
             position: relative;
-            padding-top: 0;
+            padding-top: 1.5rem;
+            justify-content: space-evenly;
+        }
+        /* Горизонтальная линия на всю ширину — карточки перекроют лишнее */
+        .children-row::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 2px;
+            background-color: #0d6efd;
         }
         .child-wrapper {
             display: flex;
             flex-direction: column;
             align-items: center;
             position: relative;
-            min-width: 0;
         }
-        .child-line {
-            width: 2px;
-            height: 1rem;
-            background-color: #0d6efd;
-        }
-        .children-row::before {
+        /* Вертикальная линия от горизонтальной к карточке */
+        .child-wrapper::before {
             content: '';
             position: absolute;
             top: 0;
-            left: calc(10% + 1px);
-            right: calc(10% + 1px);
-            height: 2px;
+            left: 50%;
+            width: 2px;
+            height: 1.5rem;
             background-color: #0d6efd;
+            transform: translateX(-50%);
+        }
+        .child-line {
+            display: none;
         }
         .person-card {
             border: 1px solid #dee2e6;
@@ -59,6 +69,8 @@
             text-align: center;
             min-width: 150px;
             transition: box-shadow 0.2s;
+            position: relative;
+            z-index: 1;
         }
         .person-card:hover {
             box-shadow: 0 4px 8px rgba(0,0,0,0.2);
