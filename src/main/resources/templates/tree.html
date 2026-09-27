@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html xmlns:th="http://www.thymeleaf.org" lang="ru">
+<html xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org/extras/spring-security" lang="ru">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -109,13 +109,18 @@
     <div th:if="${tree.root}" class="tree-container">
         <!-- Parents row: Husband + Wife -->
         <div class="couple-row">
-            <a th:href="@{/persons/{id}(id=${tree.root.id})}" class="person-card">
-                <div th:if="${tree.root.photoUrl}">
-                    <img th:src="${tree.root.photoUrl}" alt="photo">
+            <div class="person-card">
+                <a th:href="@{/persons/{id}(id=${tree.root.id})}" class="text-decoration-none text-dark">
+                    <div th:if="${tree.root.photoUrl}">
+                        <img th:src="${tree.root.photoUrl}" alt="photo">
+                    </div>
+                    <div class="name" th:text="${tree.root.firstName} + ' ' + ${tree.root.lastName}"></div>
+                    <div class="dates" th:text="${tree.root.birthDate}"></div>
+                </a>
+                <div th:if="${canEditRoot}">
+                    <a th:href="@{/persons/{id}/edit(id=${tree.root.id})}" class="btn btn-sm btn-outline-primary mt-2">Редактировать</a>
                 </div>
-                <div class="name" th:text="${tree.root.firstName} + ' ' + ${tree.root.lastName}"></div>
-                <div class="dates" th:text="${tree.root.birthDate}"></div>
-            </a>
+            </div>
 
             <div th:if="${tree.wife}" class="spouse-connector">❤️</div>
 

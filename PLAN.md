@@ -54,8 +54,8 @@
 
 | ID | Задача | Dependencies | Acceptance Criteria |
 |----|--------|--------------|---------------------|
-| SEC-011 | In-Memory Authentication (Минимум) | None | Задано два пользователя: `admin` (roles USER, MASTER), `user` (role USER). Форма входа появляется при обращении к защищенным ресурсам. Logout работает. Пользователи вынесены в `application.properties`. |
-| SEC-012 | Ограничение прав (Владение) | SEC-011 | Правило вынесено в `PermissionService.canEdit(id)`: `return person.getOwnerUsername() != null && person.getOwnerUsername().equals(currentUsername);`. Кнопка обернута в `<div sec:authorize="@permissionService.canEdit(${person.id})">`. |
+| ✅ SEC-011 | In-Memory Authentication (Минимум) | None | Задано два пользователя: `admin` (roles USER, MASTER), `user` (role USER). Форма входа появляется при обращении к защищенным ресурсам. Logout работает. Пользователи вынесены в `application.properties`. |
+| ✅ SEC-012 | Ограничение прав (Владение) | SEC-011 | Правило вынесено в `PermissionService.canEdit(id)`: `return person.getOwnerUsername() != null && person.getOwnerUsername().equals(currentUsername);`. Кнопка обернута в `<div sec:authorize="@permissionService.canEdit(${person.id})">`. |
 | SEC-013 | Проверка Мастер-прав (Подготовка) | SEC-012 | Логика метода `canEdit()` обновляется: `(является владельцем) OR (имеет роль ROLE_MASTER)`. |
 | SEC-014 | Dual-response: авторизованные видят полные данные | SEC-013 | `PersonController` проверяет `Authentication`. Авторизованный пользователь получает `PersonResponse` (полные данные), неавторизованный — `PersonPublicResponse` (маскированные). |
 
