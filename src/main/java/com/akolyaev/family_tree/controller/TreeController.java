@@ -1,6 +1,7 @@
 package com.akolyaev.family_tree.controller;
 
 import com.akolyaev.family_tree.domain.Person;
+import com.akolyaev.family_tree.dto.PersonRequest;
 import com.akolyaev.family_tree.dto.PersonResponse;
 import com.akolyaev.family_tree.dto.TreeResponse;
 import com.akolyaev.family_tree.service.PermissionService;
@@ -9,8 +10,12 @@ import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
+
+import jakarta.validation.Valid;
 
 import java.util.List;
 
@@ -86,5 +91,37 @@ public class TreeController {
             model.addAttribute("fullPerson", personService.toFullResponse(person));
         }
         return "person";
+    }
+
+    @GetMapping("/persons/{id}/edit")
+    public String editPage(@PathVariable Long id, Authentication authentication, Model model) {
+        if (authentication == null || !authentication.isAuthenticated()) {
+            throw new org.springframework.security.access.AccessDeniedException("Authentication required");
+        }
+        String currentUsername = authentication.getName();
+        if (!permissionService.canEdit(id, currentUsername, personService.getRepository(), authentication)) {
+            throw new org.springframework.security.access.AccessDeniedException("Access denied");
+        }
+        Person person = personService.getByIdFull(id);
+        model.addAttribute("person", person);
+        model.addAttribute("request", new PersonRequest());
+        return "person-edit";
+    }
+
+    @PostMapping("/persons/{id}/edit")
+    public String saveEdit(
+            @PathVariable Long id,
+            @Valid @ModelAttribute PersonRequest request,
+            Authentication authentication,
+            Model model) {
+        if (authentication == null || !authentication.isAuthenticated()) {
+            throw new org.springframework.security.access.AccessDeniedException("Authentication required");
+        }
+        String currentUsername = authentication.getName();
+        if (!permissionService.canEdit(id, currentUsername, personService.getRepository(), authentication)) {
+            throw new org.springframework.security.access.AccessDeniedException("Access denied");
+        }
+        personService.update(id, request);
+        return "redirect:/persons/" + id;
     }
 }

@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Редактирование</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+</head>
+<body class="d-flex flex-column min-vh-100">
+<div th:replace="~{layout/_header}"></div>
+
+<div class="container mt-4 flex-grow-1">
+    <div class="row justify-content-center">
+        <div class="col-md-6">
+            <h2 class="text-center mb-4">Редактирование</h2>
+
+            <form th:action="@{/persons/{id}/edit(id=${person.id})}" th:object="${request}" method="post">
+                <!-- firstName -->
+                <div class="mb-3">
+                    <label for="firstName" class="form-label">Имя</label>
+                    <input type="text" class="form-control" id="firstName" th:field="*{firstName}" required>
+                </div>
+
+                <!-- lastName -->
+                <div class="mb-3">
+                    <label for="lastName" class="form-label">Фамилия</label>
+                    <input type="text" class="form-control" id="lastName" th:field="*{lastName}" required>
+                </div>
+
+                <!-- birthDate -->
+                <div class="mb-3">
+                    <label for="birthDate" class="form-label">Дата рождения</label>
+                    <input type="date" class="form-control" id="birthDate" th:field="*{birthDate}">
+                </div>
+
+                <!-- deathDate (present but disabled) -->
+                <div class="mb-3">
+                    <label for="deathDate" class="form-label">Дата смерти</label>
+                    <input type="date" class="form-control" id="deathDate" th:field="*{deathDate}" disabled>
+                </div>
+
+                <!-- bio -->
+                <div class="mb-3">
+                    <label for="bio" class="form-label">Биография</label>
+                    <textarea class="form-control" id="bio" th:field="*{bio}" rows="3"></textarea>
+                </div>
+
+                <!-- Submit -->
+                <div class="d-grid gap-2">
+                    <button type="submit" class="btn btn-primary">Сохранить</button>
+                </div>
+            </form>
+
+            <!-- Back to person page -->
+            <div class="mt-3 text-center">
+                <a th:href="@{/persons/{id}(id=${person.id})}" class="btn btn-link">Отмена</a>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div th:replace="~{layout/_footer}"></div>
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>
