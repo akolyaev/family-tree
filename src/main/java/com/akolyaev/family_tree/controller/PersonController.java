@@ -14,8 +14,6 @@ import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
 import jakarta.validation.Valid;
 
-import java.util.List;
-
 @RestController
 @RequestMapping("/api/persons")
 public class PersonController {
@@ -37,12 +35,23 @@ public class PersonController {
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<PersonPublicResponse> getById(@PathVariable Long id) {
-        return ResponseEntity.ok(personService.getByIdPublic(id));
+    public ResponseEntity<?> getById(@PathVariable Long id, Authentication authentication) {
+        Person person = personService.getByIdFull(id);
+        if (authentication != null && authentication.isAuthenticated()) {
+            return ResponseEntity.ok(personService.toFullResponse(person));
+        }
+        return ResponseEntity.ok(personService.toPublicResponse(person));
     }
 
     @GetMapping
-    public ResponseEntity<List<PersonPublicResponse>> findAll() {
+    public ResponseEntity<?> findAll(Authentication authentication) {
+        if (authentication != null && authentication.isAuthenticated()) {
+            return ResponseEntity.ok(
+                    personService.findAllFull().stream()
+                            .map(personService::toFullResponse)
+                            .collect(java.util.stream.Collectors.toList())
+            );
+        }
         return ResponseEntity.ok(personService.findAllPublic());
     }
 
@@ -51,13 +60,12 @@ public class PersonController {
             @PathVariable Long id,
             @Valid @RequestBody PersonRequest request,
             Authentication authentication) {
-        if (authentication != null && authentication.isAuthenticated()) {
-            String currentUsername = authentication.getName();
-            if (!permissionService.canEdit(id, currentUsername, personService.getRepository())) {
-                throw new AccessDeniedException("You can only edit your own profile");
-            }
-        } else {
+        if (authentication == null || !authentication.isAuthenticated()) {
             throw new AccessDeniedException("Authentication required");
+        }
+        String currentUsername = authentication.getName();
+        if (!permissionService.canEdit(id, currentUsername, personService.getRepository(), authentication)) {
+            throw new AccessDeniedException("You can only edit your own profile");
         }
         Person person = personService.update(id, request);
         return ResponseEntity.ok(personService.toPublicResponse(person));
@@ -65,13 +73,12 @@ public class PersonController {
 
     @DeleteMapping("/{id}")
     public ResponseEntity<Void> delete(@PathVariable Long id, Authentication authentication) {
-        if (authentication != null && authentication.isAuthenticated()) {
-            String currentUsername = authentication.getName();
-            if (!permissionService.canEdit(id, currentUsername, personService.getRepository())) {
-                throw new AccessDeniedException("You can only delete your own profile");
-            }
-        } else {
+        if (authentication == null || !authentication.isAuthenticated()) {
             throw new AccessDeniedException("Authentication required");
+        }
+        String currentUsername = authentication.getName();
+        if (!permissionService.canEdit(id, currentUsername, personService.getRepository(), authentication)) {
+            throw new AccessDeniedException("You can only delete your own profile");
         }
         personService.delete(id);
         return ResponseEntity.noContent().build();

@@ -1,5 +1,6 @@
 package com.akolyaev.family_tree.controller;
 
+import com.akolyaev.family_tree.dto.PersonResponse;
 import com.akolyaev.family_tree.dto.TreeResponse;
 import com.akolyaev.family_tree.service.PermissionService;
 import com.akolyaev.family_tree.service.PersonService;
@@ -8,6 +9,8 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestParam;
+
+import java.util.List;
 
 @Controller
 public class TreeController {
@@ -35,10 +38,27 @@ public class TreeController {
         TreeResponse tree = personService.getFamilyTree(username);
         model.addAttribute("tree", tree);
         boolean canEdit = false;
-        if (authentication != null && authentication.isAuthenticated()) {
-            canEdit = permissionService.canEdit(tree.getRoot().getId(), authentication.getName(), personService.getRepository());
+        boolean isAuthenticated = authentication != null && authentication.isAuthenticated();
+        if (isAuthenticated) {
+            canEdit = permissionService.canEdit(tree.getRoot().getId(), authentication.getName(), personService.getRepository(), authentication);
         }
         model.addAttribute("canEditRoot", canEdit);
+        model.addAttribute("isAuthenticated", isAuthenticated);
+        if (isAuthenticated && tree.getRoot() != null) {
+            // Pass full data for authenticated users
+            model.addAttribute("fullRoot", personService.toFullResponse(
+                    personService.getByIdFull(tree.getRoot().getId())));
+            if (tree.getWife() != null) {
+                model.addAttribute("fullWife", personService.toFullResponse(
+                        personService.getByIdFull(tree.getWife().getId())));
+            }
+            if (tree.getChildren() != null && !tree.getChildren().isEmpty()) {
+                List<PersonResponse> fullChildren = tree.getChildren().stream()
+                        .map(child -> personService.toFullResponse(personService.getByIdFull(child.getId())))
+                        .toList();
+                model.addAttribute("fullChildren", fullChildren);
+            }
+        }
         return "tree";
     }
 

@@ -3,6 +3,7 @@ package com.akolyaev.family_tree.service;
 import com.akolyaev.family_tree.domain.Person;
 import com.akolyaev.family_tree.dto.PersonPublicResponse;
 import com.akolyaev.family_tree.dto.PersonRequest;
+import com.akolyaev.family_tree.dto.PersonResponse;
 import com.akolyaev.family_tree.dto.TreeResponse;
 import com.akolyaev.family_tree.exception.EntityNotFoundException;
 import com.akolyaev.family_tree.repository.PersonRepository;
@@ -58,10 +59,21 @@ public class PersonService {
     }
 
     @Transactional(readOnly = true)
+    public Person getByIdFull(Long id) {
+        return personRepository.findById(id)
+                .orElseThrow(() -> new EntityNotFoundException("Person not found with id: " + id));
+    }
+
+    @Transactional(readOnly = true)
     public List<PersonPublicResponse> findAllPublic() {
         return personRepository.findAll().stream()
                 .map(this::toPublicResponse)
                 .collect(Collectors.toList());
+    }
+
+    @Transactional(readOnly = true)
+    public List<Person> findAllFull() {
+        return personRepository.findAll();
     }
 
     @Transactional
@@ -150,6 +162,23 @@ public class PersonService {
                 .photoUrl(person.getPhotoUrl())
                 .birthDate(MaskingUtil.maskDate(person.getBirthDate()))
                 .deathDate(MaskingUtil.maskDate(person.getDeathDate()))
+                .ownerUsername(person.getOwnerUsername())
+                .isClaimed(person.getIsClaimed())
+                .fatherId(person.getFather() != null ? person.getFather().getId().toString() : null)
+                .motherId(person.getMother() != null ? person.getMother().getId().toString() : null)
+                .spouseId(person.getSpouse() != null ? person.getSpouse().getId().toString() : null)
+                .build();
+    }
+
+    public PersonResponse toFullResponse(Person person) {
+        return PersonResponse.builder()
+                .id(person.getId().toString())
+                .firstName(person.getFirstName())
+                .lastName(person.getLastName())
+                .bio(person.getBio())
+                .photoUrl(person.getPhotoUrl())
+                .birthDate(person.getBirthDate())
+                .deathDate(person.getDeathDate())
                 .ownerUsername(person.getOwnerUsername())
                 .isClaimed(person.getIsClaimed())
                 .fatherId(person.getFather() != null ? person.getFather().getId().toString() : null)

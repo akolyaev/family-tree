@@ -114,8 +114,8 @@
                     <div th:if="${tree.root.photoUrl}">
                         <img th:src="${tree.root.photoUrl}" alt="photo">
                     </div>
-                    <div class="name" th:text="${tree.root.firstName} + ' ' + ${tree.root.lastName}"></div>
-                    <div class="dates" th:text="${tree.root.birthDate}"></div>
+                    <div class="name" th:text="${isAuthenticated ? fullRoot.firstName : tree.root.firstName} + ' ' + ${isAuthenticated ? fullRoot.lastName : tree.root.lastName}"></div>
+                    <div class="dates" th:text="${isAuthenticated ? fullRoot.birthDate : tree.root.birthDate}"></div>
                 </a>
                 <div th:if="${canEditRoot}">
                     <a th:href="@{/persons/{id}/edit(id=${tree.root.id})}" class="btn btn-sm btn-outline-primary mt-2">Редактировать</a>
@@ -126,10 +126,10 @@
 
             <a th:href="@{/persons/{id}(id=${tree.wife.id})}" class="person-card" th:if="${tree.wife}">
                 <div th:if="${tree.wife.photoUrl}">
-                    <img th:src="${tree.wife.photoUrl}" alt="photo">
+                    <img th:src="${isAuthenticated ? fullWife.photoUrl : tree.wife.photoUrl}" alt="photo">
                 </div>
-                <div class="name" th:text="${tree.wife.firstName} + ' ' + ${tree.wife.lastName}"></div>
-                <div class="dates" th:text="${tree.wife.birthDate}"></div>
+                <div class="name" th:text="${isAuthenticated ? fullWife.firstName : tree.wife.firstName} + ' ' + ${isAuthenticated ? fullWife.lastName : tree.wife.lastName}"></div>
+                <div class="dates" th:text="${isAuthenticated ? fullWife.birthDate : tree.wife.birthDate}"></div>
             </a>
         </div>
 
@@ -138,14 +138,14 @@
 
         <!-- Children row -->
         <div class="children-row" th:if="${#lists.size(tree.children) > 0}">
-            <div class="child-wrapper" th:each="child : ${tree.children}">
+            <div class="child-wrapper" th:each="child, childStat : ${tree.children}">
                 <div class="child-line"></div>
                 <a th:href="@{/persons/{id}(id=${child.id})}" class="person-card">
                     <div th:if="${child.photoUrl}">
-                        <img th:src="${child.photoUrl}" alt="photo">
+                        <img th:src="${isAuthenticated ? fullChildren[__${childStat.index}__].photoUrl : child.photoUrl}" alt="photo">
                     </div>
-                    <div class="name" th:text="${child.firstName} + ' ' + ${child.lastName}"></div>
-                    <div class="dates" th:text="${child.birthDate}"></div>
+                    <div class="name" th:text="${isAuthenticated ? fullChildren[__${childStat.index}__].firstName : child.firstName} + ' ' + ${isAuthenticated ? fullChildren[__${childStat.index}__].lastName : child.lastName}"></div>
+                    <div class="dates" th:text="${isAuthenticated ? fullChildren[__${childStat.index}__].birthDate : child.birthDate}"></div>
                 </a>
             </div>
         </div>
