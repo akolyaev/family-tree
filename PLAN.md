@@ -55,9 +55,9 @@
 | ID | Задача | Dependencies | Acceptance Criteria |
 |----|--------|--------------|---------------------|
 | ✅ SEC-011 | In-Memory Authentication (Минимум) | None | Задано два пользователя: `admin` (roles USER, MASTER), `user` (role USER). Форма входа появляется при обращении к защищенным ресурсам. Logout работает. Пользователи вынесены в `application.properties`. |
-| ✅ SEC-012 | Ограничение прав (Владение) | SEC-011 | Правило вынесено в `PermissionService.canEdit(id)`: `return person.getOwnerUsername() != null && person.getOwnerUsername().equals(currentUsername);`. Кнопка обернута в `<div sec:authorize="@permissionService.canEdit(${person.id})">`. |
+| ❌ SEC-012 | Ограничение прав (Владение) | SEC-011 | Правило вынесено в `PermissionService.canEdit(id)`: `return person.getOwnerUsername() != null && person.getOwnerUsername().equals(currentUsername);`. Кнопка обернута в `<div sec:authorize="@permissionService.canEdit(${person.id})">`. Контроллер `/persons/{id}/edit` возвращает HTTP 403, если `canEdit == false`. |
 | SEC-013 | Проверка Мастер-прав (Подготовка) | SEC-012 | Логика метода `canEdit()` обновляется: `(является владельцем) OR (имеет роль ROLE_MASTER)`. |
-| SEC-014 | Dual-response: авторизованные видят полные данные | SEC-013 | `PersonController` проверяет `Authentication`. Авторизованный пользователь получает `PersonResponse` (полные данные), неавторизованный — `PersonPublicResponse` (маскированные). |
+| SEC-014 | Dual-response: авторизованные видят полные данные | SEC-013 | `PersonController` (REST) проверяет `Authentication`. Авторизованный пользователь получает `PersonResponse` (полные данные), неавторизованный — `PersonPublicResponse` (маскированные). Tree page (`/tree`) также показывает полные данные для авторизованных пользователей (через модель). |
 
 ---
 
@@ -67,8 +67,8 @@
 |----|--------|--------------|---------------------|
 | ✅ FE-008 | Bootstrap 5 и базовый лейаут | None | Мастер-шаблоны `_header.html` (с кнопкой «Войти») и `_footer.html`. Адаптивное меню. |
 | ✅ FE-010-VISUAL | Главная страница как дерево | BE-006-TREE, BE-008-STUB | Лендинг `/` отображает схему: блок «Муж + Жена», соединенный линиями с блоками «Сын» и «Дочь». Реализация: CSS-коннекторы (без JS-библиотек). При клике на элемент — переход на `/persons/{id}`. |
-| SEC-016 | Страница `/register` (заглушка) | None | URL `/register` → Thymeleaf-страница «Feature coming soon». |
-| FE-009-CARD-PREFILL | Предзаполненная карточка профиля | FE-010-VISUAL | Страница `/persons/{id}` показывает ФИО, даты, фото. Дата смерти **не рендерится вообще** (ни тега, ни условия `th:if`). Поле «Био» присутствует визуально, но пустое (или имеет плейсхолдер). |
+| ✅ SEC-016 | Страница `/register` (заглушка) | None | URL `/register` → Thymeleaf-страница «Feature coming soon». |
+| FE-009-CARD-PREFILL | Предзаполненная карточка профиля | FE-010-VISUAL | Страница `/persons/{id}` показывает ФИО, даты, фото. Дата смерти **не рендерится вообще** (ни тега, ни условия `th:if`). Поле «Био» присутствует визуально, но пустое (или имеет плейсхолдер). Для авторизованных — полные данные, для гостей — маскированные. |
 | FE-013-RESTRICTED-FORM | Форма редактирования (без фото) | FE-009-CARD-PREFILL | Страница `/persons/{id}/edit` предзаполнена. Содержит инпуты текста и дат. Инпутов для загрузки фото и ввода даты смерти нет. |
 | FE-015 | Условное отображение кнопки | SEC-012, FE-013 | Кнопка «Редактировать» видна только если `canEdit == true`. |
 

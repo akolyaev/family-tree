@@ -41,4 +41,9 @@ public class TreeController {
         model.addAttribute("canEditRoot", canEdit);
         return "tree";
     }
+
+    @GetMapping("/register")
+    public String register() {
+        return "register";
+    }
 }
