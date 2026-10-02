@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org/extras/spring-security" lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title th:text="${isAuthenticated ? fullPerson.firstName + ' ' + fullPerson.lastName : person.firstName + ' ' + person.lastName}">Профиль</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+</head>
+<body class="d-flex flex-column min-vh-100">
+<div th:replace="~{layout/_header}"></div>
+
+<div class="container mt-4 flex-grow-1">
+    <div class="row justify-content-center">
+        <div class="col-md-6">
+            <div class="card">
+                <div class="card-body text-center">
+                    <!-- Photo -->
+                    <div th:if="${isAuthenticated ? fullPerson.photoUrl : person.photoUrl}">
+                        <img th:src="${isAuthenticated ? fullPerson.photoUrl : person.photoUrl}" alt="photo" class="rounded-circle mb-3" style="width: 150px; height: 150px; object-fit: cover;">
+                    </div>
+
+                    <!-- Name -->
+                    <h3 th:text="${isAuthenticated ? fullPerson.firstName : person.firstName} + ' ' + ${isAuthenticated ? fullPerson.lastName : person.lastName}"></h3>
+
+                    <!-- Dates -->
+                    <p class="text-muted" th:text="${isAuthenticated ? fullPerson.birthDate : person.birthDate}"></p>
+
+                    <!-- Bio (empty/placeholder) -->
+                    <div class="mt-3 p-3 bg-light rounded">
+                        <p class="text-muted mb-0" th:text="${isAuthenticated ? fullPerson.bio : person.bio}">Биография не указана</p>
+                    </div>
+
+                    <!-- Edit button (only for owner) -->
+                    <div th:if="${canEdit}" class="mt-3">
+                        <a th:href="@{/persons/{id}/edit(id=${person.id})}" class="btn btn-outline-primary">Редактировать</a>
+                    </div>
+
+                    <!-- Back to tree -->
+                    <div class="mt-3">
+                        <a th:href="@{/tree}" class="btn btn-link">Назад к дереву</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div th:replace="~{layout/_footer}"></div>
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>

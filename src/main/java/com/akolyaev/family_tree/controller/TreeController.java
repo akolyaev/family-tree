@@ -1,5 +1,6 @@
 package com.akolyaev.family_tree.controller;
 
+import com.akolyaev.family_tree.domain.Person;
 import com.akolyaev.family_tree.dto.PersonResponse;
 import com.akolyaev.family_tree.dto.TreeResponse;
 import com.akolyaev.family_tree.service.PermissionService;
@@ -8,6 +9,7 @@ import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestParam;
 
 import java.util.List;
@@ -65,5 +67,24 @@ public class TreeController {
     @GetMapping("/register")
     public String register() {
         return "register";
+    }
+
+    @GetMapping("/persons/{id}")
+    public String personPage(@PathVariable Long id, Authentication authentication, Model model) {
+        boolean isAuthenticated = authentication != null && authentication.isAuthenticated();
+        boolean canEdit = false;
+        if (isAuthenticated) {
+            canEdit = permissionService.canEdit(id, authentication.getName(), personService.getRepository(), authentication);
+        }
+        model.addAttribute("canEdit", canEdit);
+        model.addAttribute("isAuthenticated", isAuthenticated);
+        model.addAttribute("id", id);
+        // Pass person data for the template
+        Person person = personService.getByIdFull(id);
+        model.addAttribute("person", person);
+        if (isAuthenticated) {
+            model.addAttribute("fullPerson", personService.toFullResponse(person));
+        }
+        return "person";
     }
 }
