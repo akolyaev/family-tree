@@ -41,18 +41,20 @@ public class TreeController {
     }
 
     @GetMapping("/tree")
-    public String treePage(@RequestParam(defaultValue = "admin") String username, Authentication authentication, Model model) {
-        TreeResponse tree = personService.getFamilyTree(username);
-        model.addAttribute("tree", tree);
-        boolean canEdit = false;
-        boolean isAuthenticated = authentication != null && authentication.isAuthenticated();
-        if (isAuthenticated) {
-            canEdit = permissionService.canEdit(tree.getRoot().getId(), authentication.getName(), personService.getRepository(), authentication);
+    public String treePage(Authentication authentication, Model model) {
+        if (authentication == null || !authentication.isAuthenticated()) {
+            // Default user for guests
+            TreeResponse tree = personService.getFamilyTree("admin");
+            model.addAttribute("tree", tree);
+            model.addAttribute("isAuthenticated", false);
+            return "tree";
         }
-        model.addAttribute("canEditRoot", canEdit);
+        String currentUsername = authentication.getName();
+        TreeResponse tree = personService.getFamilyTree(currentUsername);
+        model.addAttribute("tree", tree);
+        boolean isAuthenticated = true;
         model.addAttribute("isAuthenticated", isAuthenticated);
-        if (isAuthenticated && tree.getRoot() != null) {
-            // Pass full data for authenticated users
+        if (tree.getRoot() != null) {
             model.addAttribute("fullRoot", personService.toFullResponse(
                     personService.getByIdFull(tree.getRoot().getId())));
             if (tree.getWife() != null) {
