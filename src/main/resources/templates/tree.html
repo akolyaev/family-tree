@@ -117,9 +117,6 @@
                     <div class="name" th:text="${isAuthenticated ? fullRoot.firstName : tree.root.firstName} + ' ' + ${isAuthenticated ? fullRoot.lastName : tree.root.lastName}"></div>
                     <div class="dates" th:text="${isAuthenticated ? fullRoot.birthDate : tree.root.birthDate}"></div>
                 </a>
-                <div th:if="${canEditRoot}">
-                    <a th:href="@{/persons/{id}/edit(id=${tree.root.id})}" class="btn btn-sm btn-outline-primary mt-2">Редактировать</a>
-                </div>
             </div>
 
             <div th:if="${tree.wife}" class="spouse-connector">❤️</div>

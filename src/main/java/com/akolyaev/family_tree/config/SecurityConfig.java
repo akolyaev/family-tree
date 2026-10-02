@@ -16,6 +16,9 @@ import org.springframework.security.web.SecurityFilterChain;
 @EnableWebSecurity
 public class SecurityConfig {
 
+    private final String rootUsername;
+    private final String rootPassword;
+    private final String rootRoles;
     private final String adminUsername;
     private final String adminPassword;
     private final String adminRoles;
@@ -24,12 +27,18 @@ public class SecurityConfig {
     private final String userRoles;
 
     public SecurityConfig(
+            @Value("${root.username}") String rootUsername,
+            @Value("${root.password}") String rootPassword,
+            @Value("${root.roles}") String rootRoles,
             @Value("${admin.username}") String adminUsername,
             @Value("${admin.password}") String adminPassword,
             @Value("${admin.roles}") String adminRoles,
             @Value("${user.username}") String userUsername,
             @Value("${user.password}") String userPassword,
             @Value("${user.roles}") String userRoles) {
+        this.rootUsername = rootUsername;
+        this.rootPassword = rootPassword;
+        this.rootRoles = rootRoles;
         this.adminUsername = adminUsername;
         this.adminPassword = adminPassword;
         this.adminRoles = adminRoles;
@@ -45,6 +54,11 @@ public class SecurityConfig {
 
     @Bean
     public UserDetailsService userDetailsService(PasswordEncoder encoder) {
+        var root = User.builder()
+                .username(rootUsername)
+                .password(encoder.encode(rootPassword))
+                .roles(rootRoles.split(","))
+                .build();
         var admin = User.builder()
                 .username(adminUsername)
                 .password(encoder.encode(adminPassword))
@@ -55,7 +69,7 @@ public class SecurityConfig {
                 .password(encoder.encode(userPassword))
                 .roles(userRoles.split(","))
                 .build();
-        return new InMemoryUserDetailsManager(admin, user);
+        return new InMemoryUserDetailsManager(root, admin, user);
     }
 
     @Bean
