@@ -88,7 +88,7 @@ public class SecurityConfig {
             )
             .authorizeHttpRequests(auth -> auth
                 .requestMatchers("/api/persons/**").permitAll()
-                .requestMatchers("/login", "/register", "/").permitAll()
+                .requestMatchers("/login", "/register", "/", "/tree", "/persons/**").permitAll()
                 .anyRequest().authenticated()
             );
         return http.build();

@@ -16,7 +16,7 @@ public class PersonPublicResponse {
     private String photoUrl;
     private String birthDate;      // year only as String
     private String deathDate;      // year only as String
-    private String ownerUsername;
+    private String login;
     private Boolean isClaimed;
     private String fatherId;
     private String motherId;

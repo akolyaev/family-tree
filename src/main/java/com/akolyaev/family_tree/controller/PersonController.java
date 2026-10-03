@@ -87,8 +87,8 @@ public class PersonController {
     // ---- Tree ----
 
     @GetMapping("/tree")
-    public ResponseEntity<TreeResponse> getFamilyTree(@RequestParam String username) {
-        return ResponseEntity.ok(personService.getFamilyTree(username));
+    public ResponseEntity<TreeResponse> getFamilyTree() {
+        return ResponseEntity.ok(personService.getFamilyTree());
     }
 
     // ---- Photo Upload ----

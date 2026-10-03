@@ -10,8 +10,8 @@ public class PermissionService {
 
     public boolean isOwner(Person person, String username) {
         return person != null
-                && person.getOwnerUsername() != null
-                && person.getOwnerUsername().equals(username);
+                && person.getLogin() != null
+                && person.getLogin().equals(username);
     }
 
     public boolean canEdit(Long personId, String currentUsername, PersonRepository repository, Authentication authentication) {

@@ -28,7 +28,7 @@ public class PersonRequest {
     @PastOrPresent(message = "Birth date must not be in the future")
     private LocalDate birthDate;
     private LocalDate deathDate;
-    private String ownerUsername;
+    private String login;
     private Long fatherId;
     private Long motherId;
     private Long spouseId;

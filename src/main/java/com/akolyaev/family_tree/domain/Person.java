@@ -37,8 +37,8 @@ public class Person {
     @Column(name = "death_date")
     private LocalDate deathDate;
 
-    @Column(name = "owner_username")
-    private String ownerUsername;
+    @Column(name = "login")
+    private String login;
 
     @Column(name = "is_claimed", nullable = false)
     @Builder.Default

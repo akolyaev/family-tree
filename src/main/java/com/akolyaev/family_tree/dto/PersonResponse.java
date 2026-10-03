@@ -18,7 +18,7 @@ public class PersonResponse {
     private String photoUrl;
     private LocalDate birthDate;
     private LocalDate deathDate;
-    private String ownerUsername;
+    private String login;
     private Boolean isClaimed;
     private String fatherId;
     private String motherId;

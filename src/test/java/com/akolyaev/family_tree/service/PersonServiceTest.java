@@ -43,7 +43,7 @@ class PersonServiceTest {
                 .photoUrl("http://example.com/photo.jpg")
                 .birthDate(LocalDate.of(1990, 1, 1))
                 .deathDate(null)
-                .ownerUsername("admin")
+                .login("admin")
                 .isClaimed(false)
                 .build();
     }
@@ -58,7 +58,7 @@ class PersonServiceTest {
                 .bio("Test bio")
                 .photoUrl("http://example.com/photo.jpg")
                 .birthDate(LocalDate.of(1990, 1, 1))
-                .ownerUsername("admin")
+                .login("admin")
                 .build();
 
         when(personRepository.save(any(Person.class))).thenReturn(testPerson);
@@ -137,9 +137,9 @@ class PersonServiceTest {
 
     @Test
     void getFamilyTree_returnsTreeWithRoot() {
-        when(personRepository.findByOwnerUsername("admin")).thenReturn(List.of(testPerson));
+        when(personRepository.findAll()).thenReturn(List.of(testPerson));
 
-        TreeResponse tree = personService.getFamilyTree("admin");
+        TreeResponse tree = personService.getFamilyTree();
 
         assertNotNull(tree);
         assertNotNull(tree.getRoot());
@@ -151,10 +151,10 @@ class PersonServiceTest {
     }
 
     @Test
-    void getFamilyTree_returnsEmptyWhenNoRootFound() {
-        when(personRepository.findByOwnerUsername("unknown")).thenReturn(List.of());
+    void getFamilyTree_returnsEmptyWhenNoPersonsFound() {
+        when(personRepository.findAll()).thenReturn(List.of());
 
-        TreeResponse tree = personService.getFamilyTree("unknown");
+        TreeResponse tree = personService.getFamilyTree();
 
         assertNotNull(tree);
         assertNull(tree.getRoot());
@@ -182,7 +182,7 @@ class PersonServiceTest {
 
         Person result = personService.claimPerson(1L, "admin");
 
-        assertEquals("admin", result.getOwnerUsername());
+        assertEquals("admin", result.getLogin());
         assertTrue(result.getIsClaimed());
         verify(personRepository).save(testPerson);
     }

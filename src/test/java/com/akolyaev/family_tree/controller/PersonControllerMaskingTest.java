@@ -38,7 +38,7 @@ class PersonControllerMaskingTest {
                 .firstName("John")
                 .lastName("Doe")
                 .birthDate(LocalDate.of(1985, 6, 15))
-                .ownerUsername("admin")
+                .login("admin")
                 .build();
 
         mockMvc.perform(post("/api/persons")
@@ -57,7 +57,7 @@ class PersonControllerMaskingTest {
                 .lastName("Petrova")
                 .birthDate(LocalDate.of(1990, 3, 20))
                 .deathDate(LocalDate.of(2020, 7, 10))
-                .ownerUsername("admin")
+                .login("admin")
                 .build());
 
         mockMvc.perform(get("/api/persons/" + saved.getId()))
@@ -73,7 +73,7 @@ class PersonControllerMaskingTest {
                 .firstName("Alex")
                 .lastName("Ivanov")
                 .birthDate(LocalDate.of(1995, 11, 5))
-                .ownerUsername("admin")
+                .login("admin")
                 .build());
 
         mockMvc.perform(get("/api/persons/" + saved.getId()))
@@ -89,7 +89,7 @@ class PersonControllerMaskingTest {
                 .firstName("Test")
                 .lastName("Testov")
                 .birthDate(LocalDate.of(1980, 1, 1))
-                .ownerUsername("admin")
+                .login("admin")
                 .build());
 
         PersonRequest updateRequest = PersonRequest.builder()

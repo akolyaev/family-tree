@@ -34,7 +34,7 @@ class PermissionServiceTest {
                 .id(1L)
                 .firstName("Ivan")
                 .lastName("Ivanov")
-                .ownerUsername("admin")
+                .login("admin")
                 .build();
 
         assertTrue(permissionService.isOwner(person, "admin"));
@@ -46,7 +46,7 @@ class PermissionServiceTest {
                 .id(1L)
                 .firstName("Ivan")
                 .lastName("Ivanov")
-                .ownerUsername("admin")
+                .login("admin")
                 .build();
 
         assertFalse(permissionService.isOwner(person, "other"));
@@ -63,7 +63,7 @@ class PermissionServiceTest {
                 .id(1L)
                 .firstName("Ivan")
                 .lastName("Ivanov")
-                .ownerUsername(null)
+                .login(null)
                 .build();
 
         assertFalse(permissionService.isOwner(person, "admin"));
@@ -75,7 +75,7 @@ class PermissionServiceTest {
                 .id(1L)
                 .firstName("Ivan")
                 .lastName("Ivanov")
-                .ownerUsername("admin")
+                .login("admin")
                 .build();
 
         when(repository.findById(1L)).thenReturn(Optional.of(person));
@@ -90,7 +90,7 @@ class PermissionServiceTest {
                 .id(1L)
                 .firstName("Ivan")
                 .lastName("Ivanov")
-                .ownerUsername("admin")
+                .login("admin")
                 .build();
 
         when(repository.findById(1L)).thenReturn(Optional.of(person));
@@ -105,7 +105,7 @@ class PermissionServiceTest {
                 .id(1L)
                 .firstName("Ivan")
                 .lastName("Ivanov")
-                .ownerUsername("admin")
+                .login("admin")
                 .build();
 
         when(repository.findById(1L)).thenReturn(Optional.of(person));
@@ -128,7 +128,7 @@ class PermissionServiceTest {
                 .id(1L)
                 .firstName("Ivan")
                 .lastName("Ivanov")
-                .ownerUsername("admin")
+                .login("admin")
                 .build();
 
         when(repository.findById(1L)).thenReturn(Optional.of(person));
@@ -143,7 +143,7 @@ class PermissionServiceTest {
                 .id(1L)
                 .firstName("Ivan")
                 .lastName("Ivanov")
-                .ownerUsername("admin")
+                .login("admin")
                 .build();
 
         when(repository.findById(1L)).thenReturn(Optional.of(person));

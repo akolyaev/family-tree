@@ -42,15 +42,14 @@ public class TreeController {
 
     @GetMapping("/tree")
     public String treePage(Authentication authentication, Model model) {
+        TreeResponse tree = personService.getFamilyTree();
         if (authentication == null || !authentication.isAuthenticated()) {
-            // Default user for guests
-            TreeResponse tree = personService.getFamilyTree("admin");
             model.addAttribute("tree", tree);
             model.addAttribute("isAuthenticated", false);
             return "tree";
         }
         String currentUsername = authentication.getName();
-        TreeResponse tree = personService.getFamilyTree(currentUsername);
+        model.addAttribute("tree", tree);
         model.addAttribute("tree", tree);
         boolean isAuthenticated = true;
         model.addAttribute("isAuthenticated", isAuthenticated);

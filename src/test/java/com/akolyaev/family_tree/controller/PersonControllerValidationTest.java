@@ -96,7 +96,7 @@ class PersonControllerValidationTest {
                 .lastName("Ivanov")
                 .bio("Test bio")
                 .birthDate(LocalDate.of(1990, 1, 1))
-                .ownerUsername("admin")
+                .login("admin")
                 .build();
 
         mockMvc.perform(post("/api/persons")

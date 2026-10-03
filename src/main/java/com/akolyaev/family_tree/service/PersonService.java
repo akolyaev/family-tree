@@ -12,7 +12,6 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
-import java.util.stream.Collectors;
 
 @Service
 public class PersonService {
@@ -34,7 +33,7 @@ public class PersonService {
                 .photoUrl(request.getPhotoUrl())
                 .birthDate(request.getBirthDate())
                 .deathDate(request.getDeathDate())
-                .ownerUsername(request.getOwnerUsername())
+                .login(request.getLogin())
                 .isClaimed(false)
                 .build();
 
@@ -68,7 +67,7 @@ public class PersonService {
     public List<PersonPublicResponse> findAllPublic() {
         return personRepository.findAll().stream()
                 .map(this::toPublicResponse)
-                .collect(Collectors.toList());
+                .toList();
     }
 
     @Transactional(readOnly = true)
@@ -109,13 +108,18 @@ public class PersonService {
     // ---- Tree Logic ----
 
     @Transactional(readOnly = true)
-    public TreeResponse getFamilyTree(String rootUsername) {
-        List<Person> rootPersons = personRepository.findByOwnerUsername(rootUsername);
-        if (rootPersons.isEmpty()) {
+    public TreeResponse getFamilyTree() {
+        List<Person> all = personRepository.findAll();
+        if (all.isEmpty()) {
             return TreeResponse.builder().build();
         }
 
-        Person root = rootPersons.get(0);
+        // Root = глава семьи (тот, у кого нет father)
+        Person root = all.stream()
+                .filter(p -> p.getFather() == null)
+                .findFirst()
+                .orElseThrow(() -> new EntityNotFoundException("No root person found"));
+
         PersonPublicResponse rootResponse = toPublicResponse(root);
 
         PersonPublicResponse wifeResponse = null;
@@ -123,7 +127,10 @@ public class PersonService {
             wifeResponse = toPublicResponse(root.getSpouse());
         }
 
-        List<PersonPublicResponse> children = findChildrenPublic(root);
+        List<PersonPublicResponse> children = all.stream()
+                .filter(p -> p.getFather() != null && p.getFather().getId().equals(root.getId()))
+                .map(this::toPublicResponse)
+                .toList();
 
         return TreeResponse.builder()
                 .root(rootResponse)
@@ -146,7 +153,7 @@ public class PersonService {
     public Person claimPerson(Long id, String username) {
         Person person = personRepository.findById(id)
                 .orElseThrow(() -> new EntityNotFoundException("Person not found with id: " + id));
-        person.setOwnerUsername(username);
+        person.setLogin(username);
         person.setIsClaimed(true);
         return personRepository.save(person);
     }
@@ -162,7 +169,7 @@ public class PersonService {
                 .photoUrl(person.getPhotoUrl())
                 .birthDate(MaskingUtil.maskDate(person.getBirthDate()))
                 .deathDate(MaskingUtil.maskDate(person.getDeathDate()))
-                .ownerUsername(person.getOwnerUsername())
+                .login(person.getLogin())
                 .isClaimed(person.getIsClaimed())
                 .fatherId(person.getFather() != null ? person.getFather().getId().toString() : null)
                 .motherId(person.getMother() != null ? person.getMother().getId().toString() : null)
@@ -179,7 +186,7 @@ public class PersonService {
                 .photoUrl(person.getPhotoUrl())
                 .birthDate(person.getBirthDate())
                 .deathDate(person.getDeathDate())
-                .ownerUsername(person.getOwnerUsername())
+                .login(person.getLogin())
                 .isClaimed(person.getIsClaimed())
                 .fatherId(person.getFather() != null ? person.getFather().getId().toString() : null)
                 .motherId(person.getMother() != null ? person.getMother().getId().toString() : null)
@@ -187,14 +194,7 @@ public class PersonService {
                 .build();
     }
 
-    private List<PersonPublicResponse> findChildrenPublic(Person root) {
-        List<Person> allPersons = personRepository.findAll();
-        return allPersons.stream()
-                .filter(p -> (p.getFather() != null && p.getFather().getId().equals(root.getId()))
-                        || (p.getMother() != null && p.getMother().getId().equals(root.getId())))
-                .map(this::toPublicResponse)
-                .collect(Collectors.toList());
-    }
+
 
     // ---- Accessor for PermissionService ----
 
