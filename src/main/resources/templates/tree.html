@@ -110,7 +110,8 @@
         <!-- Parents row: Husband + Wife -->
         <div class="couple-row">
             <div class="person-card">
-                <a th:href="@{/persons/{id}(id=${tree.root.id})}" class="text-decoration-none text-dark">
+                <a th:href="@{/persons/{id}(id=${tree.root.id})}"
+                   style="text-decoration: none; color: inherit; display: block;">
                     <div th:if="${tree.root.photoUrl}">
                         <img th:src="${tree.root.photoUrl}" alt="photo">
                     </div>
@@ -121,13 +122,16 @@
 
             <div th:if="${tree.wife}" class="spouse-connector">❤️</div>
 
-            <a th:href="@{/persons/{id}(id=${tree.wife.id})}" class="person-card" th:if="${tree.wife}">
-                <div th:if="${tree.wife.photoUrl}">
-                    <img th:src="${isAuthenticated ? fullWife.photoUrl : tree.wife.photoUrl}" alt="photo">
-                </div>
-                <div class="name" th:text="${isAuthenticated ? fullWife.firstName : tree.wife.firstName} + ' ' + ${isAuthenticated ? fullWife.lastName : tree.wife.lastName}"></div>
-                <div class="dates" th:text="${isAuthenticated ? fullWife.birthDate : tree.wife.birthDate}"></div>
-            </a>
+            <div th:if="${tree.wife}" class="person-card">
+                <a th:href="@{/persons/{id}(id=${tree.wife.id})}"
+                   style="text-decoration: none; color: inherit; display: block;">
+                    <div th:if="${tree.wife.photoUrl}">
+                        <img th:src="${isAuthenticated ? fullWife.photoUrl : tree.wife.photoUrl}" alt="photo">
+                    </div>
+                    <div class="name" th:text="${isAuthenticated ? fullWife.firstName : tree.wife.firstName} + ' ' + ${isAuthenticated ? fullWife.lastName : tree.wife.lastName}"></div>
+                    <div class="dates" th:text="${isAuthenticated ? fullWife.birthDate : tree.wife.birthDate}"></div>
+                </a>
+            </div>
         </div>
 
         <!-- Connector line -->
@@ -137,13 +141,16 @@
         <div class="children-row" th:if="${#lists.size(tree.children) > 0}">
             <div class="child-wrapper" th:each="child, childStat : ${tree.children}">
                 <div class="child-line"></div>
-                <a th:href="@{/persons/{id}(id=${child.id})}" class="person-card">
-                    <div th:if="${child.photoUrl}">
-                        <img th:src="${isAuthenticated ? fullChildren[__${childStat.index}__].photoUrl : child.photoUrl}" alt="photo">
-                    </div>
-                    <div class="name" th:text="${isAuthenticated ? fullChildren[__${childStat.index}__].firstName : child.firstName} + ' ' + ${isAuthenticated ? fullChildren[__${childStat.index}__].lastName : child.lastName}"></div>
-                    <div class="dates" th:text="${isAuthenticated ? fullChildren[__${childStat.index}__].birthDate : child.birthDate}"></div>
-                </a>
+                <div class="person-card">
+                    <a th:href="@{/persons/{id}(id=${child.id})}"
+                       style="text-decoration: none; color: inherit; display: block;">
+                        <div th:if="${child.photoUrl}">
+                            <img th:src="${isAuthenticated ? fullChildren[__${childStat.index}__].photoUrl : child.photoUrl}" alt="photo">
+                        </div>
+                        <div class="name" th:text="${isAuthenticated ? fullChildren[__${childStat.index}__].firstName : child.firstName} + ' ' + ${isAuthenticated ? fullChildren[__${childStat.index}__].lastName : child.lastName}"></div>
+                        <div class="dates" th:text="${isAuthenticated ? fullChildren[__${childStat.index}__].birthDate : child.birthDate}"></div>
+                    </a>
+                </div>
             </div>
         </div>
 

@@ -15,28 +15,28 @@
             <h2 class="text-center mb-4">Редактирование</h2>
 
             <form th:action="@{/persons/{id}/edit(id=${person.id})}" th:object="${request}" method="post">
-                <!-- firstName -->
+                <!-- firstName (read-only) -->
                 <div class="mb-3">
-                    <label for="firstName" class="form-label">Имя</label>
-                    <input type="text" class="form-control" id="firstName" th:field="*{firstName}" required>
+                    <label class="form-label fw-bold">Имя</label>
+                    <span class="form-control-plaintext" th:text="${person.firstName}"></span>
                 </div>
 
-                <!-- lastName -->
+                <!-- lastName (read-only) -->
                 <div class="mb-3">
-                    <label for="lastName" class="form-label">Фамилия</label>
-                    <input type="text" class="form-control" id="lastName" th:field="*{lastName}" required>
+                    <label class="form-label fw-bold">Фамилия</label>
+                    <span class="form-control-plaintext" th:text="${person.lastName}"></span>
                 </div>
 
-                <!-- birthDate -->
+                <!-- birthDate (read-only) -->
                 <div class="mb-3">
-                    <label for="birthDate" class="form-label">Дата рождения</label>
-                    <input type="date" class="form-control" id="birthDate" th:field="*{birthDate}">
+                    <label class="form-label fw-bold">Дата рождения</label>
+                    <span class="form-control-plaintext" th:text="${person.birthDate != null ? person.birthDate.toString() : ''}"></span>
                 </div>
 
-                <!-- bio -->
+                <!-- bio (editable) -->
                 <div class="mb-3">
-                    <label for="bio" class="form-label">Биография</label>
-                    <textarea class="form-control" id="bio" th:field="*{bio}" rows="3"></textarea>
+                    <label for="bio" class="form-label fw-bold">Биография</label>
+                    <textarea class="form-control" id="bio" name="bio" th:text="${request.bio}" rows="3"></textarea>
                 </div>
 
                 <!-- Submit -->

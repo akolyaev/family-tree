@@ -4,6 +4,7 @@ import com.akolyaev.family_tree.domain.Person;
 import com.akolyaev.family_tree.dto.PersonPublicResponse;
 import com.akolyaev.family_tree.dto.PersonRequest;
 import com.akolyaev.family_tree.dto.PersonResponse;
+import com.akolyaev.family_tree.dto.PersonUpdateRequest;
 import com.akolyaev.family_tree.dto.TreeResponse;
 import com.akolyaev.family_tree.exception.EntityNotFoundException;
 import com.akolyaev.family_tree.repository.PersonRepository;
@@ -83,7 +84,6 @@ public class PersonService {
         person.setFirstName(request.getFirstName());
         person.setLastName(request.getLastName());
         person.setBio(request.getBio());
-        person.setPhotoUrl(request.getPhotoUrl());
         person.setBirthDate(request.getBirthDate());
         person.setDeathDate(request.getDeathDate());
 
@@ -96,6 +96,16 @@ public class PersonService {
         if (request.getSpouseId() != null) {
             personRepository.findById(request.getSpouseId()).ifPresent(person::setSpouse);
         }
+
+        return personRepository.save(person);
+    }
+
+    @Transactional
+    public Person update(Long id, PersonUpdateRequest request) {
+        Person person = personRepository.findById(id)
+                .orElseThrow(() -> new EntityNotFoundException("Person not found with id: " + id));
+
+        person.setBio(request.getBio());
 
         return personRepository.save(person);
     }

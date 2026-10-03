@@ -2,6 +2,7 @@ package com.akolyaev.family_tree.controller;
 
 import com.akolyaev.family_tree.domain.Person;
 import com.akolyaev.family_tree.dto.PersonRequest;
+import com.akolyaev.family_tree.dto.PersonUpdateRequest;
 import com.akolyaev.family_tree.dto.PersonResponse;
 import com.akolyaev.family_tree.dto.TreeResponse;
 import com.akolyaev.family_tree.service.PermissionService;
@@ -31,7 +32,7 @@ public class TreeController {
 
     @GetMapping("/")
     public String index() {
-        return "index";
+        return "redirect:/tree";
     }
 
     @GetMapping("/login")
@@ -83,9 +84,8 @@ public class TreeController {
         model.addAttribute("canEdit", canEdit);
         model.addAttribute("isAuthenticated", isAuthenticated);
         model.addAttribute("id", id);
-        // Pass person data for the template
         Person person = personService.getByIdFull(id);
-        model.addAttribute("person", person);
+        model.addAttribute("publicPerson", personService.toPublicResponse(person));
         if (isAuthenticated) {
             model.addAttribute("fullPerson", personService.toFullResponse(person));
         }
@@ -103,14 +103,17 @@ public class TreeController {
         }
         Person person = personService.getByIdFull(id);
         model.addAttribute("person", person);
-        model.addAttribute("request", new PersonRequest());
+        PersonUpdateRequest request = PersonUpdateRequest.builder()
+                .bio(person.getBio())
+                .build();
+        model.addAttribute("request", request);
         return "person-edit";
     }
 
     @PostMapping("/persons/{id}/edit")
     public String saveEdit(
             @PathVariable Long id,
-            @Valid @ModelAttribute PersonRequest request,
+            @Valid @ModelAttribute PersonUpdateRequest request,
             Authentication authentication,
             Model model) {
         if (authentication == null || !authentication.isAuthenticated()) {
