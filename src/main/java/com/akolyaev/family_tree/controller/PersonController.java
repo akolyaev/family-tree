@@ -49,7 +49,7 @@ public class PersonController {
             return ResponseEntity.ok(
                     personService.findAllFull().stream()
                             .map(personService::toFullResponse)
-                            .collect(java.util.stream.Collectors.toList())
+                            .toList()
             );
         }
         return ResponseEntity.ok(personService.findAllPublic());

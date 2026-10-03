@@ -194,8 +194,6 @@ public class PersonService {
                 .build();
     }
 
-
-
     // ---- Accessor for PermissionService ----
 
     public PersonRepository getRepository() {
