@@ -40,6 +40,9 @@ public class Person {
     @Column(name = "login")
     private String login;
 
+    @Column(name = "gender")
+    private String gender;
+
     @Column(name = "is_claimed", nullable = false)
     @Builder.Default
     private Boolean isClaimed = false;

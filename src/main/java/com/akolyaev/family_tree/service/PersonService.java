@@ -35,6 +35,7 @@ public class PersonService {
                 .birthDate(request.getBirthDate())
                 .deathDate(request.getDeathDate())
                 .login(request.getLogin())
+                .gender(request.getGender())
                 .isClaimed(false)
                 .build();
 
@@ -180,6 +181,7 @@ public class PersonService {
                 .birthDate(MaskingUtil.maskDate(person.getBirthDate()))
                 .deathDate(MaskingUtil.maskDate(person.getDeathDate()))
                 .login(person.getLogin())
+                .gender(person.getGender())
                 .isClaimed(person.getIsClaimed())
                 .fatherId(person.getFather() != null ? person.getFather().getId().toString() : null)
                 .motherId(person.getMother() != null ? person.getMother().getId().toString() : null)
@@ -197,6 +199,7 @@ public class PersonService {
                 .birthDate(person.getBirthDate())
                 .deathDate(person.getDeathDate())
                 .login(person.getLogin())
+                .gender(person.getGender())
                 .isClaimed(person.getIsClaimed())
                 .fatherId(person.getFather() != null ? person.getFather().getId().toString() : null)
                 .motherId(person.getMother() != null ? person.getMother().getId().toString() : null)

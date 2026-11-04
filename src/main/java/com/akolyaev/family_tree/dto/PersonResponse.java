@@ -19,6 +19,7 @@ public class PersonResponse {
     private LocalDate birthDate;
     private LocalDate deathDate;
     private String login;
+    private String gender;
     private Boolean isClaimed;
     private String fatherId;
     private String motherId;

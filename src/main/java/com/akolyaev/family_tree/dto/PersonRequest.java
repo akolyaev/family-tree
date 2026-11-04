@@ -29,6 +29,7 @@ public class PersonRequest {
     private LocalDate birthDate;
     private LocalDate deathDate;
     private String login;
+    private String gender;
     private Long fatherId;
     private Long motherId;
     private Long spouseId;

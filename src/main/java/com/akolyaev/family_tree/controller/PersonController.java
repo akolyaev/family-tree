@@ -1,7 +1,9 @@
 package com.akolyaev.family_tree.controller;
 
+import com.akolyaev.family_tree.converter.TreeConverter;
 import com.akolyaev.family_tree.domain.Person;
 import com.akolyaev.family_tree.dto.ClaimRequest;
+import com.akolyaev.family_tree.dto.PersonNode;
 import com.akolyaev.family_tree.dto.PersonPublicResponse;
 import com.akolyaev.family_tree.dto.PersonRequest;
 import com.akolyaev.family_tree.dto.PhotoUploadRequest;
@@ -13,6 +15,7 @@ import org.springframework.security.access.AccessDeniedException;
 import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
 import jakarta.validation.Valid;
+import java.util.List;
 
 @RestController
 @RequestMapping("/api/persons")
@@ -20,10 +23,12 @@ public class PersonController {
 
     private final PersonService personService;
     private final PermissionService permissionService;
+    private final TreeConverter treeConverter;
 
-    public PersonController(PersonService personService, PermissionService permissionService) {
+    public PersonController(PersonService personService, PermissionService permissionService, TreeConverter treeConverter) {
         this.personService = personService;
         this.permissionService = permissionService;
+        this.treeConverter = treeConverter;
     }
 
     // ---- CRUD ----
@@ -89,6 +94,37 @@ public class PersonController {
     @GetMapping("/tree")
     public ResponseEntity<TreeResponse> getFamilyTree() {
         return ResponseEntity.ok(personService.getFamilyTree());
+    }
+
+    /**
+     * Cedrine-compatible tree endpoint.
+     * Returns PersonNode format with full/masked data based on auth.
+     */
+    @GetMapping("/tree/personnode")
+    public ResponseEntity<PersonNode> getFamilyTreeForCedrine(Authentication authentication) {
+        TreeResponse treeResponse = personService.getFamilyTree();
+        PersonNode personNode = treeConverter.toPersonNode(treeResponse);
+        
+        // If authenticated, replace public responses with full responses
+        if (authentication != null && authentication.isAuthenticated()) {
+            Person rootFull = personService.getByIdFull(treeResponse.getRoot().getId());
+            personNode.setPerson(personService.toFullResponse(rootFull));
+            
+            if (treeResponse.getWife() != null) {
+                Person wifeFull = personService.getByIdFull(treeResponse.getWife().getId());
+                personNode.setPartner(personService.toFullResponse(wifeFull));
+            }
+            
+            List<Object> childrenFull = treeResponse.getChildren().stream()
+                    .map(child -> {
+                        Person full = personService.getByIdFull(child.getId());
+                        return (Object) personService.toFullResponse(full);
+                    })
+                    .toList();
+            personNode.setChildren(childrenFull);
+        }
+        
+        return ResponseEntity.ok(personNode);
     }
 
     // ---- Photo Upload ----

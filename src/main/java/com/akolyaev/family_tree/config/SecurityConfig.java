@@ -62,6 +62,7 @@ public class SecurityConfig {
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
         http
             .csrf(csrf -> csrf.disable())
+            .httpBasic(basic -> {})
             .formLogin(form -> form
                 .loginPage("/login")
                 .defaultSuccessUrl("/tree", true)
@@ -73,7 +74,7 @@ public class SecurityConfig {
                 .clearAuthentication(true)
             )
             .authorizeHttpRequests(auth -> auth
-                .requestMatchers("/api/persons/**").permitAll()
+                .requestMatchers("/api/persons/**", "/api/auth/**").permitAll()
                 .requestMatchers("/login", "/register", "/", "/tree", "/persons/**").permitAll()
                 .anyRequest().authenticated()
             );

@@ -18,16 +18,16 @@
 
 ---
 
-## Фаза 2: Backend для Cedrine
+## ✅ Фаза 2: Backend для Cedrine
 
 **Контекст:** Бэкенд возвращает `TreeResponse` (root/wife/children), Cedrine принимает `PersonNode` (персона + partnerships → дети). Нужен слой конвертации + поле gender.
 
 | ID | Задача | Dependencies | Acceptance Criteria |
 |----|--------|--------------|---------------------|
-| MVP2-200 | Добавить `gender` в entity + DTO | None | `Person.gender` (enum, nullable). Flyway `V4__add_gender_to_person.sql`. DTO: `PersonResponse`, `PersonPublicResponse`, `PersonRequest` содержат `gender: String \| null`. |
-| MVP2-201 | `TreeConverter` — `TreeResponse → PersonNode` | MVP2-200 | Класс `TreeConverter` с методом `toPersonNode(TreeResponse)`. Корень → `PersonNode.person`, wife → `Partnership.partner`, children → `Partnership.children`. Поддержка `null` wife и пустых children. |
-| MVP2-202 | Endpoint `GET /api/persons/tree/personnode` | MVP2-201 | Возвращает `PersonNode` JSON. Авторизованный → полные данные, неавторизованный → `PersonPublicResponse` (masked). |
-| MVP2-203 | Endpoint `GET /api/auth/me` | None | Возвращает `{ authenticated: true/false, username, roles }` или 401. Используется navbar для определения статуса. |
+| ✅ MVP2-200 | Добавить `gender` в entity + DTO | None | `Person.gender` (enum, nullable). Flyway `V4__add_gender_to_person.sql`. DTO: `PersonResponse`, `PersonPublicResponse`, `PersonRequest` содержат `gender: String \| null`. |
+| ✅ MVP2-201 | `TreeConverter` — `TreeResponse → PersonNode` | MVP2-200 | Класс `TreeConverter` с методом `toPersonNode(TreeResponse)`. Корень → `PersonNode.person`, wife → `Partnership.partner`, children → `Partnership.children`. Поддержка `null` wife и пустых children. |
+| ✅ MVP2-202 | Endpoint `GET /api/persons/tree/personnode` | MVP2-201 | Возвращает `PersonNode` JSON. Авторизованный → полные данные, неавторизованный → `PersonPublicResponse` (masked). |
+| ✅ MVP2-203 | Endpoint `GET /api/auth/me` | None | Возвращает `{ authenticated: true/false, username, roles }` или 401. Используется navbar для определения статуса. |
 
 > ⏸ **Checkpoint 1 — REST API ready.** UI ещё нет. Проверяем:
 > - `curl http://localhost:8080/api/auth/me` → 401 (не авторизован)
