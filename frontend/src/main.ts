@@ -1,4 +1,9 @@
-// Frontend entry point for Family Tree SPA
-// This file will be replaced with actual SPA logic during MVP2 migration
+/**
+ * Family Tree SPA — Entry Point
+ *
+ * This is the main entry point for the single-page application.
+ * It initializes the SPA shell, handles routing, and manages
+ * the interaction between the navbar, tree view, and modals.
+ */
 
-console.log('Family Tree frontend scaffold initialized');
+console.log('Family Tree SPA initialized');

@@ -4,15 +4,15 @@
 
 ---
 
-## Фаза 1: Frontend scaffold + Vite
+## ✅ Фаза 1: Frontend scaffold + Vite
 
 **Контекст:** Создаём отдельный `frontend/` проект на Vite + TypeScript. Подключаем Cedrine. Настраиваем Spring Boot для раздачи статки.
 
 | ID | Задача | Dependencies | Acceptance Criteria |
 |----|--------|--------------|---------------------|
-| MVP2-100 | Создать `frontend/` структуру | None | Файлы: `index.html`, `src/main.ts`, `src/tree.ts`, `src/api.ts`, `src/utils.ts`. `package.json` (pnpm), `tsconfig.json`, `vite.config.ts`. `pnpm build` собирает `dist/`. Vite dev server (`pnpm dev`) — опционален для быстрой разработки с HMR; основной доступ через Spring Boot на `:8080`. |
-| MVP2-101 | Подключить `@phinnaeus/cedrine` | MVP2-100 | `pnpm i @phinnaeus/cedrine` проходит без ошибок. Import в `tree.ts` работает. |
-| MVP2-102 | Spring Boot: раздача SPA static | MVP2-100 | `WebConfig` — `addResourceHandler("/**")` → `classpath:/static/`. SPA fallback: все запросы к несуществующим файлам → `index.html`. |
+| ✅ MVP2-100 | Создать `frontend/` структуру | None | Файлы: `index.html`, `src/main.ts`, `src/tree.ts`, `src/api.ts`, `src/utils.ts`. `package.json` (pnpm), `tsconfig.json`, `vite.config.ts`. `pnpm build` собирает `dist/`. Vite dev server (`pnpm dev`) — опционален для быстрой разработки с HMR; основной доступ через Spring Boot на `:8080`. |
+| ✅ MVP2-101 | Подключить `@phinnaeus/cedrine` | MVP2-100 | `pnpm i @phinnaeus/cedrine` проходит без ошибок. Import в `tree.ts` работает. |
+| ✅ MVP2-102 | Spring Boot: раздача SPA static | MVP2-100 | `WebConfig` — `addResourceHandler("/**")` → `classpath:/static/`. SPA fallback: все запросы к несуществующим файлам → `index.html`. |
 
 > ⏸ **Checkpoint 0 — Infra only.** UI ещё нет. Проверяем: `mvn clean package` собирается, `pnpm build` собирает `dist/` без ошибок, Spring Boot раздаёт static с `:8080`. |
 
