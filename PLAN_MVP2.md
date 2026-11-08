@@ -40,12 +40,14 @@
 
 ## Фаза 3: SPA Shell
 
-**Контекст:** Один HTML-файл — точка входа SPA. Navbar, контейнер дерева, модальное окно карточки, hash-based routing.
+**Контекст:** Один HTML-файл — точка входа SPA. Navbar, контейнер дерева, модальное окно карточки, hash-based routing. Единый CSS-файл для стилей. Настройка Spring Security для hash-based redirect после логина.
 
 | ID | Задача | Dependencies | Acceptance Criteria |
 |----|--------|--------------|---------------------|
-| MVP2-300 | `frontend/index.html` + navbar | MVP2-100 | Точка входа SPA: navbar (логотип, кнопки "Дерево", "Войти"/"Выйти", search input), `<div id="tree-container">`, `<div id="person-modal">` (скрыто). Подключает `src/main.ts`. |
+| MVP2-300 | `frontend/index.html` + navbar | MVP2-100 | Точка входа SPA: navbar (логотип, кнопки "Дерево", "Войти"/"Выйти", search input), `<div id="tree-container">`, `<div id="person-modal">` (скрыто). Подключает `src/main.ts` и `src/styles.css`. |
 | MVP2-301 | SPA routing + modal shell | MVP2-300 | Hash-based routing: `#/tree` → показать граф, `#/person/{id}` → открыть modal. `hashchange` listener обновляет view. Modal содержит skeleton карточки и кнопки "Редактировать"/"Закрыть". |
+| MVP2-302 | `frontend/src/styles.css` + navbar/modal styles | MVP2-300 | Единый CSS-файл: переменные (`--ced-card-bg`, `--ced-card-border`, `--ced-text`), стили navbar (flexbox, sticky top), стили modal (fixed overlay, centered card), стили карточки (border-radius, shadow, transition). |
+| MVP2-303 | SecurityConfig: hash-based login redirect | MVP2-301 | `SecurityConfig`: `defaultSuccessUrl("/#/tree", true)` — после логина Spring делает redirect на `/#/tree`, SPA hash routing перехватывает и показывает дерево. |
 
 > ⏸ **Checkpoint 2 — SPA Shell visible.** UI появляется! Проверяем:
 > - Открываем `/` → видим navbar с логотипом, кнопками "Дерево", "Войти"/"Выйти", search input
@@ -53,7 +55,7 @@
 > - Modal открыт по умолчанию или по кнопке — видим skeleton карточки
 > - Нажимаем "Закрыть" → modal скрывается
 > - Нажимаем "Войти" → Spring Security form login (redirect на `/login`)
-> - После логина → redirect на `/tree` → SPA routing с `#/tree`
+> - После логина → redirect на `/#/tree` → SPA routing показывает дерево
 > - Кнопка "Войти" меняется на логин пользователя + "Выйти"
 > - **UI доступен, но дерево пустое** — это рабочий инкремент
 
@@ -61,11 +63,11 @@
 
 ## Фаза 4: Tree rendering с Cedrine
 
-**Контекст:** Основная фича — рендеринг SVG-дерева. Fetch данных, renderCard, avatars, search, fitToView.
+**Контекст:** Основная фича — рендеринг SVG-дерева. **Переписать `tree.ts` с нуля** — удалить hand-rolled SVG-рендерер (rects, lines, groups) и использовать `@phinnaeus/cedrine` API. Fetch данных, renderCard, avatars, search, fitToView.
 
 | ID | Задача | Dependencies | Acceptance Criteria |
 |----|--------|--------------|---------------------|
-| MVP2-400 | Cedrine init + fetch tree data | MVP2-202 | `src/tree.ts`: `createFamilyTree(container, options)` с кастомным `renderCard` (фото, ФИО, даты). `fetch('/api/persons/tree/personnode')` → `tree.update(data)`. `tree.fitToView()` после загрузки. Error state — "Дерево пусто"/"Ошибка". |
+| MVP2-400 | **Переписать** `tree.ts` с использованием Cedrine API | MVP2-202 | Удалить hand-rolled SVG-рендерер из `tree.ts`. Использовать `@phinnaeus/cedrine`: `Cedrine.create(container, options)` с кастомным `renderCard` (фото, ФИО, даты). `fetch('/api/persons/tree/personnode')` → `tree.update(data)`. `tree.fitToView()` после загрузки. Error state — "Дерево пусто"/"Ошибка". |
 | MVP2-401 | PII masking + avatars + CSS | MVP2-400 | Для неавторизованных: фамилия маскируется, даты → только год. `<img>` для `avatar_url` с placeholder. CSS variables (`--ced-card-bg`, `--ced-card-border`, `--ced-text`) переопределены в `index.html`. Layout: `cardWidth: 160, cardHeight: 80, xSpacing: 40, ySpacing: 120, coupleGap: 16`. |
 | MVP2-402 | Search by name | MVP2-401 | Search input в navbar → `tree.search(query)` + `tree.searchHighlight(personIds)`. Очистка при пустом поле. Найденные подсвечиваются жёлтым. |
 
@@ -104,9 +106,11 @@
 
 **Контекст:** Удаление Thymeleaf, обновление Dockerfile, docs, финальная полировка.
 
+> ⚠️ **Важно:** Статические HTML для login/register (`static/login.html`, `static/register.html`) были перенесены из Thymeleaf-шаблонов в `static/` на **фазе 3** (MVP2-300), чтобы тестировать полный login flow с самого начала. На фазе 6 — только удаление `spring-boot-starter-thymeleaf` из `pom.xml` и удаление `TreeController`.
+
 | ID | Задача | Dependencies | Acceptance Criteria |
 |----|--------|--------------|---------------------|
-| MVP2-600 | Удалить Thymeleaf + обновить SecurityConfig | MVP2-501 | `spring-boot-starter-thymeleaf` удалён из `pom.xml`. CSRF disabled (SPA uses fetch). Form login остаётся для `/login`. `/api/persons/**`, `/api/auth/**`, `/login` — permitAll. Остальное — authenticated. Static HTML для login/register (переименовать `login.html` → `static/login.html`). |
+| MVP2-600 | Удалить Thymeleaf + обновить SecurityConfig | MVP2-501 | `spring-boot-starter-thymeleaf` удалён из `pom.xml`. CSRF disabled (SPA uses fetch). Form login остаётся для `/login`. `/api/persons/**`, `/api/auth/**`, `/login`, `/register` — permitAll. Остальное — authenticated. `TreeController` удалён (Thymeleaf MVC больше не нужен). |
 | MVP2-601 | Multi-stage Dockerfile | MVP2-600 | Dockerfile: `pnpm build` для frontend → static в `target/classes/static/`. Образ < 200MB. `corepack enable pnpm`. |
 | MVP2-602 | docker-compose + docs | MVP2-601 | `docker-compose up -d --build` собирает и запускает app с SPA. Обновить `QUICKSTART.md`, `API_TESTS.md`, `PLAN.md`. |
 
